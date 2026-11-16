@@ -129,13 +129,10 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 .mount {perspective:calc(var(--w) * 4.5)}
 .badge-turn {position:relative;width:100%;aspect-ratio:.78;transform-style:preserve-3d;transition:transform .68s cubic-bezier(.32,.02,.18,1)}
 /* One animated angle keeps the upper ring, both clasp arms and card in phase. */
-@property --hardware-turn {syntax:"<angle>";inherits:true;initial-value:0deg}
-.rig {--hardware-turn:0deg;transition:--hardware-turn .68s cubic-bezier(.32,.02,.18,1)}
-.turned .rig {--hardware-turn:180deg}
+.rig {--hardware-turn:0deg}
 .ring {transform-origin:50% 100%;transform:rotate(var(--ring-angle)) rotateY(var(--hardware-turn))}
 .mount::before,.mount::after,.badge-turn {transform:rotateY(var(--hardware-turn))}
 .badge-turn {transition:none}
-@media(prefers-reduced-motion:reduce){.rig{transition:none}}
 .badge-turn .badge {position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;margin:0}
 .front {transform:rotateY(0deg)}
 .reverse {transform:rotateY(180deg)}
@@ -273,7 +270,7 @@ const stage = document.querySelector('.stage');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const cards = [...document.querySelectorAll('.unit')].map((unit,index) => ({
   unit, index, rig:unit.querySelector('.rig'), joint:unit.querySelector('.joint'), button:unit.querySelector('.badge-toggle'),
-  offsetX:0, speedX:0, length:0, velocity:0, angle:0, spin:0, target:0, restAngle:[-2,1.6,-1.1,1.3][index]
+  turn:0, turnTarget:0, offsetX:0, speedX:0, length:0, velocity:0, angle:0, spin:0, target:0, restAngle:[-2,1.6,-1.1,1.3][index]
 }));
 // Sample a flat woven strip. The curve has zero slope at both attachments.
 const bandCount=16;
@@ -390,10 +387,24 @@ function releaseMomentum(c,gesture,time) {
   c.velocity=vy*scale;
   c.spin=Math.max(-110,Math.min(110,(last.angle-first.angle)/dt));
 }
+function advanceTurn(card,dt) {
+  const remaining=card.turnTarget-card.turn;
+  if(!remaining) return false;
+  const step=reduced.matches?1:dt/1.06;
+  card.turn+=Math.sign(remaining)*Math.min(step,Math.abs(remaining));
+  // Ease through each quarter-turn so the thin acrylic edge stays legible.
+  const phase=card.turn*2;
+  const quarter=Math.floor(phase);
+  const t=phase-quarter;
+  const eased=t*(.4+.6*t*(3-2*t));
+  card.rig.style.setProperty('--hardware-turn',((quarter+eased)*90)+'deg');
+  return card.turn!==card.turnTarget;
+}
 function animate(time) {
   const dt = Math.min((time-lastTime)/1000,.05); lastTime=time;
   let active=false;
   for (const c of cards) {
+    if(advanceTurn(c,dt)) active=true;
     if(reduced.matches) c.flex=c.flexSpeed=0;
     else {
       c.flexSpeed+=(-185*c.flex-19*c.flexSpeed)*dt;
@@ -432,6 +443,7 @@ function layout(initial=false) {
     if (!initial && !c.swinging && Math.abs(c.target-target)>1) c.spin += [17,-20,15,-13][c.index];
     c.target=target;
     c.button.setAttribute('aria-expanded',String(down));
+    c.turnTarget=down?1:0;
     c.unit.classList.toggle('turned',down);
     const platforms=c.unit.querySelector('.platforms');
     if(platforms) platforms.inert=!down;
@@ -650,13 +662,9 @@ function rotatePoint(x,y,degrees) {
 }
 for(const c of cards) {
   const mount=c.button.closest('.mount');
-  // While downloads are previews, their surface still belongs to the draggable badge.
-  mount.onclick=e=>{
-    if(e.target===c.button || (e.detail>0 && e.target.closest('.platforms button[aria-disabled="true"]'))) activate(c);
-  };
+  c.button.onclick=()=>activate(c);
   mount.onpointerdown=e=>{
-    if(!e.isPrimary||e.button!==0||drag) return;
-    if(e.target!==c.button && !e.target.closest('.platforms button[aria-disabled="true"]')) return;
+    if(!e.isPrimary||e.button!==0||drag||e.target!==c.button) return;
     c.unit.classList.add('pulled');
     const bounds=c.unit.getBoundingClientRect();
     const anchorX=bounds.left+bounds.width/2, anchorY=bounds.top+bounds.height/2;

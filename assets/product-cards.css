@@ -72,14 +72,14 @@
 }
 
 .unit:not(.person) .badge-turn > .name {
-  transform:translateZ(1px);
+  transform:translateZ(2px);
   backface-visibility:visible;
   pointer-events:none;
 }
-.unit:not(.person) .front {transform:translateZ(.8px)}
-.unit:not(.person) .reverse {transform:rotateY(180deg) translateZ(.8px)}
+.unit:not(.person) .front {transform:translateZ(1.7px)}
+.unit:not(.person) .reverse {transform:rotateY(180deg) translateZ(1.7px)}
 .unit:not(.person) .badge-turn::before,.unit:not(.person) .badge-turn::after {
-  content:"";position:absolute;top:6%;bottom:6%;width:1.6px;
+  content:"";position:absolute;top:6%;bottom:6%;width:3.4px;
   background:linear-gradient(#d5e5df99 0 6%,var(--insert-color) 6% 82%,#d5e5df99 82%);
   transform:translateX(-50%) rotateY(90deg);
 }
