@@ -20,11 +20,13 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 .unit.pulled {z-index:4;animation-play-state:paused}
 .rig { padding-top:var(--length); position:absolute; width:100%; top:0; transform-origin:50% 0; will-change:transform }
 .strap {
-  position:absolute; top:var(--anchor-y); left:0; right:0; width:var(--strap); margin:auto; height:var(--ribbon-length); min-height:3px; transform-origin:50% 0; transform:rotate(var(--pull-angle)) rotateY(var(--hardware-turn));
-  background:repeating-linear-gradient(37deg,#ffffff23 0 1px,transparent 1px 3px),repeating-linear-gradient(143deg,#1112 0 1px,transparent 1px 3px),linear-gradient(90deg,var(--edge),var(--fabric) 9% 90%,var(--edge));
-  border-inline:1px solid #24282230; border-radius:0 0 3px 3px; box-shadow:4px 4px 5px #39382720;
+  position:absolute; top:var(--anchor-y); left:0; right:0; width:var(--strap); margin:auto; height:var(--ribbon-length); min-height:3px; transform-origin:50% 0; transform:rotate(var(--pull-angle));
 }
-.strap::after { content:""; position:absolute; bottom:5px; left:9%; right:9%; height:8px; border-block:1px dashed #fff5 }
+.strap > i {position:absolute;left:0;width:100%;transform-origin:50% 0;pointer-events:none;
+  background:repeating-linear-gradient(37deg,#ffffff23 0 1px,transparent 1px 3px),repeating-linear-gradient(143deg,#1112 0 1px,transparent 1px 3px),linear-gradient(90deg,var(--edge),var(--fabric) 9% 90%,var(--edge));
+  border-inline:1px solid #24282230; background-position:0 var(--weave-y),0 var(--weave-y),0 0;
+}
+.strap > i:last-child::after { content:""; position:absolute; bottom:2px; left:9%; right:9%; height:4px; border-block:1px dashed #fff5 }
 .joint { position:relative; width:100%; display:grid; justify-items:center; transform-origin:50% 0; will-change:transform }
 .ring {
   z-index:1; width:calc(var(--strap)*1.25); height:calc(var(--strap)*.58);
@@ -209,6 +211,29 @@ const cards = [...document.querySelectorAll('.unit')].map((unit,index) => ({
   unit, index, rig:unit.querySelector('.rig'), joint:unit.querySelector('.joint'), button:unit.querySelector('.badge-toggle'),
   offsetX:0, speedX:0, length:0, velocity:0, angle:0, spin:0, target:0, restAngle:[-2,1.6,-1.1,1.3][index]
 }));
+// Sample a flat woven strip. The curve has zero slope at both attachments.
+const bandCount=16;
+for(const card of cards) {
+  const strap=card.unit.querySelector('.strap');
+  card.bands=Array.from({length:bandCount},()=>strap.appendChild(document.createElement('i')));
+  card.flex=card.flexSpeed=0;
+}
+function drawRibbon(card,length,bend) {
+  if(card.drawnLength===length && card.drawnBend===bend) return;
+  card.drawnLength=length;
+  card.drawnBend=bend;
+  let x=0;
+  const step=length/bandCount;
+  card.bands.forEach((band,i)=>{
+    const t=(i+1)/bandCount;
+    const nextX=bend*16*t*t*(1-t)*(1-t);
+    const tilt=-Math.atan2(nextX-x,step);
+    band.style.height=(Math.hypot(nextX-x,step)+(i+1<bandCount?.55:0))+'px';
+    band.style.setProperty('--weave-y',-i*step+'px');
+    band.style.transform='translate('+x+'px,'+(i*step)+'px) rotate('+tilt+'rad) rotateY(var(--hardware-turn))';
+    x=nextX;
+  });
+}
 let product = null, personalOpen = false;
 let frame = 0, lastTime = 0, drag = null;
 function positions(card) {
@@ -228,7 +253,19 @@ function paint(card) {
   const hinge=rotatePoint(0,card.hingeY,jointAngle);
   const dx=card.offsetX+hinge.x, dy=card.length+hinge.y-card.anchorY;
   const direction=-Math.atan2(dx,dy);
-  card.rig.style.setProperty('--ribbon-length',Math.max(0,Math.hypot(dx,dy)-card.ringHeight+2)+'px');
+  const span=Math.hypot(dx,dy);
+  const length=Math.max(0,span-card.ringHeight+2);
+  const normalX=span?dy/span:0, normalY=span?-dx/span:0;
+  if(card.lastTip && !reduced.matches){
+    const sideways=(dx-card.lastTip.x)*normalX+(dy-card.lastTip.y)*normalY;
+    card.flex-=sideways*.38;
+  }
+  card.lastTip={x:dx,y:dy};
+  // A fully extended lanyard has less lateral give than a slack one.
+  const limit=Math.min(length*.13,32/(1+length/430));
+  card.flex=Math.max(-limit,Math.min(limit,card.flex));
+  drawRibbon(card,length,card.flex);
+  card.rig.style.setProperty('--ribbon-length',length+'px');
   card.rig.style.setProperty('--pull-angle',direction+'rad');
   card.joint.style.setProperty('--ring-angle',(direction-jointAngle*Math.PI/180)+'rad');
   card.rig.style.transform='rotate('+card.angle*.36+'deg)';
@@ -238,7 +275,14 @@ function animate(time) {
   const dt = Math.min((time-lastTime)/1000,.025); lastTime=time;
   let active=false;
   for (const c of cards) {
-    if (drag?.card===c) continue;
+    if(reduced.matches) c.flex=c.flexSpeed=0;
+    else {
+      c.flexSpeed+=(-185*c.flex-19*c.flexSpeed)*dt;
+      c.flex+=c.flexSpeed*dt;
+    }
+    if(Math.abs(c.flex)+Math.abs(c.flexSpeed)>.06) active=true;
+    else c.flex=c.flexSpeed=0;
+    if (drag?.card===c) {paint(c);continue;}
     if (reduced.matches) { c.length=c.target; c.angle=c.restAngle; c.offsetX=c.speedX=c.velocity=c.spin=0; }
     else {
       c.speedX += (-c.offsetX*118-c.speedX*15)*dt;
@@ -486,6 +530,7 @@ for(const c of cards) {
     c.length=pivot.y;
     c.speedX=c.velocity=c.spin=0;
     paint(c);
+    wake();
   };
   function release(e) {
     if(drag?.id!==e.pointerId||drag.card!==c) return;
