@@ -20,10 +20,11 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 .rig { position:absolute; width:100%; top:0; transform-origin:50% 0; will-change:transform }
 .strap {
   position:relative; width:var(--strap); margin:auto; height:var(--length); min-height:3px;
-  background:repeating-linear-gradient(37deg,#ffffff23 0 1px,transparent 1px 3px),repeating-linear-gradient(143deg,#1112 0 1px,transparent 1px 3px),linear-gradient(90deg,var(--edge),var(--fabric) 9% 90%,var(--edge));
+  clip-path:var(--ribbon-outline);
+  background:var(--ribbon-light,linear-gradient(transparent,transparent)),repeating-linear-gradient(37deg,#ffffff23 0 1px,transparent 1px 3px),repeating-linear-gradient(143deg,#1112 0 1px,transparent 1px 3px),linear-gradient(90deg,var(--edge),var(--fabric) 9% 90%,var(--edge));
   border-inline:1px solid #24282230; border-radius:0 0 3px 3px; box-shadow:4px 4px 5px #39382720;
 }
-.strap::after { content:""; position:absolute; bottom:5px; left:9%; right:9%; height:8px; border-block:1px dashed #fff5 }
+.strap::after { content:""; position:absolute; bottom:5px; left:9%; right:9%; height:8px; transform:rotateY(var(--hardware-turn)); border-block:1px dashed #fff5 }
 .joint { position:relative; width:100%; display:grid; justify-items:center; transform-origin:50% 0; will-change:transform }
 .ring {
   z-index:1; width:calc(var(--strap)*1.25); height:calc(var(--strap)*.58);
@@ -123,11 +124,11 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 .badge-turn {position:relative;width:100%;aspect-ratio:.78;transform-style:preserve-3d;transition:transform .68s cubic-bezier(.32,.02,.18,1)}
 /* One animated angle keeps the upper ring, both clasp arms and card in phase. */
 @property --hardware-turn {syntax:"<angle>";inherits:true;initial-value:0deg}
-.joint {--hardware-turn:0deg;transition:--hardware-turn .68s cubic-bezier(.32,.02,.18,1)}
-.turned .joint {--hardware-turn:180deg}
+.rig {--hardware-turn:0deg;transition:--hardware-turn .68s cubic-bezier(.32,.02,.18,1)}
+.turned .rig {--hardware-turn:180deg}
 .ring,.mount::before,.mount::after,.badge-turn {transform:rotateY(var(--hardware-turn))}
 .badge-turn {transition:none}
-@media(prefers-reduced-motion:reduce){.joint{transition:none}}
+@media(prefers-reduced-motion:reduce){.rig{transition:none}}
 .badge-turn .badge {position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;margin:0}
 .front {transform:rotateY(0deg)}
 .reverse {transform:rotateY(180deg)}
@@ -181,6 +182,22 @@ const cards = [...document.querySelectorAll('.unit')].map((unit,index) => ({
   unit, index, rig:unit.querySelector('.rig'), joint:unit.querySelector('.joint'), button:unit.querySelector('.badge-toggle'),
   length:0, velocity:0, angle:0, spin:0, target:0, restAngle:[-2,1.6,-1.1,1.3][index]
 }));
+// Project the two edges of a twisted ribbon. Its top is pinned and its tip
+// shares the ring's angle. Keep a sliver of fabric visible edge-on.
+const leftEdge = [], rightEdge = [], ribbonLight = [];
+for (let step = 0; step <= 24; step++) {
+  const fraction = step / 24;
+  const y = fraction * 100 + '%';
+  const angle = 'calc(var(--hardware-turn) * ' + fraction + ')';
+  const halfWidth = 'max(.65px, 50% * abs(cos(' + angle + ')))';
+  leftEdge.push('calc(50% - ' + halfWidth + ') ' + y);
+  rightEdge.unshift('calc(50% + ' + halfWidth + ') ' + y);
+  ribbonLight.push('rgb(28 30 27 / calc(.38 * sin(' + angle + '))) ' + y);
+}
+for (const strap of document.querySelectorAll('.strap')) {
+  strap.style.setProperty('--ribbon-outline', 'polygon(' + [...leftEdge,...rightEdge].join(',') + ')');
+  strap.style.setProperty('--ribbon-light', 'linear-gradient(to bottom,' + ribbonLight.join(',') + ')');
+}
 let product = null, personalOpen = false;
 let frame = 0, lastTime = 0, drag = null;
 function positions(card) {
