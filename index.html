@@ -649,9 +649,14 @@ function rotatePoint(x,y,degrees) {
   return {x:x*Math.cos(a)-y*Math.sin(a),y:x*Math.sin(a)+y*Math.cos(a)};
 }
 for(const c of cards) {
-  c.button.onclick=()=>activate(c);
-  c.button.onpointerdown=e=>{
+  const mount=c.button.closest('.mount');
+  // While downloads are previews, their surface still belongs to the draggable badge.
+  mount.onclick=e=>{
+    if(e.target===c.button || (e.detail>0 && e.target.closest('.platforms button[aria-disabled="true"]'))) activate(c);
+  };
+  mount.onpointerdown=e=>{
     if(!e.isPrimary||e.button!==0||drag) return;
+    if(e.target!==c.button && !e.target.closest('.platforms button[aria-disabled="true"]')) return;
     c.unit.classList.add('pulled');
     const bounds=c.unit.getBoundingClientRect();
     const anchorX=bounds.left+bounds.width/2, anchorY=bounds.top+bounds.height/2;
@@ -665,9 +670,9 @@ for(const c of cards) {
     const radius=Math.max(20,c.button.offsetHeight*.45);
     const armX=-grip.x, armY=c.joint.offsetHeight-c.button.offsetHeight*.5-grip.y;
     drag={pointer,previous:pointer,vx:0,vy:0,armX,armY,radius,samples,id:e.pointerId,card:c,x:e.clientX,y:e.clientY,anchorX,anchorY,breeze,grip,moved:false};
-    c.button.setPointerCapture(e.pointerId);
+    e.target.setPointerCapture(e.pointerId);
   };
-  c.button.onpointermove=e=>{
+  mount.onpointermove=e=>{
     if(drag?.id!==e.pointerId||drag.card!==c) return;
     const dy=e.clientY-drag.y, dx=e.clientX-drag.x;
     if(!drag.moved && Math.hypot(dx,dy)<6) return;
@@ -688,14 +693,14 @@ for(const c of cards) {
     }
     drag=null;
     if(moved && e.type==='pointerup') {
-      c.button.addEventListener('click',ev=>{ev.stopImmediatePropagation();ev.preventDefault()},{once:true,capture:true,signal:AbortSignal.timeout(450)});
+      mount.addEventListener('click',ev=>{ev.stopImmediatePropagation();ev.preventDefault()},{once:true,capture:true,signal:AbortSignal.timeout(450)});
       if(distance>18) activate(c);
       else if(distance< -18 && c.button.getAttribute('aria-expanded')==='true') setOpen(c,false);
     }
     wake();
   }
-  c.button.onpointerup=release;
-  c.button.onpointercancel=release;
+  mount.onpointerup=release;
+  mount.onpointercancel=release;
 }
 layout(true);
 new ResizeObserver(()=>layout()).observe(stage);
