@@ -71,13 +71,29 @@
   .stage {--w:min(24vw,26svh,324px)}
 }
 
-.unit:not(.person) .badge .name {padding:0}
+.unit:not(.person) .badge-turn > .name {
+  transform:translateZ(1px);
+  backface-visibility:visible;
+  pointer-events:none;
+}
+.unit:not(.person) .front {transform:translateZ(.8px)}
+.unit:not(.person) .reverse {transform:rotateY(180deg) translateZ(.8px)}
+.unit:not(.person) .badge-turn::before,.unit:not(.person) .badge-turn::after {
+  content:"";position:absolute;top:6%;bottom:6%;width:1.6px;
+  background:linear-gradient(#d5e5df99 0 6%,var(--insert-color) 6% 82%,#d5e5df99 82%);
+  transform:translateX(-50%) rotateY(90deg);
+}
+.unit:not(.person) .badge-turn::before {left:0}
+.unit:not(.person) .badge-turn::after {left:100%}
+.mac {--insert-color:#c9def2}
+.english {--insert-color:#fdc19a}
+.cs {--insert-color:#d3d9aa}
+.product-print::before {background:var(--insert-color)}
 .unit:not(.person) .badge.reverse {border:1px solid transparent}
-.unit:not(.person) .badge.reverse > .name {transform:scaleX(-1)}
 .product-print .platforms {
-  inset:23% 16% 34%;
+  inset:19% 11% 30%;
   display:grid;grid-template-rows:1fr 1fr;gap:calc(var(--w)*.055);
   justify-content:stretch;
 }
-.product-print .platforms button {width:100%;background:#ffffff36}
+.product-print .platforms button {width:100%;font-size:clamp(10px,calc(var(--w)*.079),24px);background:#ffffff36}
 .product-print .platforms button:is(:hover,:focus-visible) {background:#ffffffa8}
