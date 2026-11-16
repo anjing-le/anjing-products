@@ -88,8 +88,8 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 .feature:focus-visible {outline:none}
 .feature:focus-visible .face {outline:2px solid currentColor;outline-offset:3px}
 .scene {width:96%;height:90%;object-fit:contain;border-radius:6%;pointer-events:none}
-.hand.reveal .feature {animation:deal .34s backwards; animation-delay:var(--delay)}
-.hand.closing .feature {animation:gather .28s ease-in both}
+.hand.reveal .feature {animation:deal calc(var(--motion-duration) * .78) cubic-bezier(.3,.07,.4,1) backwards; animation-delay:var(--delay)}
+.hand.closing .feature {animation:gather var(--motion-duration) ease-in-out both}
 @keyframes gather {to {transform:translate(var(--gather-x),14svh) scale(.72);opacity:0}}
 @keyframes deal {from {opacity:0;transform:translateY(22px) rotate(-5deg)}}
 @media(max-width:600px){.hand{--card-width:56vw;bottom:10svh}.feature{aspect-ratio:.82}.feature + .feature{margin-left:calc(var(--card-width) * -.81)}}
@@ -413,24 +413,22 @@ function releaseMomentum(c,gesture,time) {
   c.velocity=vy*scale;
   c.spin=Math.max(-110,Math.min(110,(last.angle-first.angle)/dt));
 }
+const turnDurationMs=480;
 function advanceTurn(card,dt) {
   const remaining=card.turnTarget-card.turn;
   if(!remaining) return false;
-  const step=reduced.matches?1:dt/1.06;
+  const step=reduced.matches?1:dt*1000/turnDurationMs;
   card.turn+=Math.sign(remaining)*Math.min(step,Math.abs(remaining));
-  // Ease through each quarter-turn so the thin acrylic edge stays legible.
-  const phase=card.turn*2;
-  const quarter=Math.floor(phase);
-  const t=phase-quarter;
-  const eased=t*(.4+.6*t*(3-2*t));
-  card.rig.style.setProperty('--hardware-turn',((quarter+eased)*90)+'deg');
+  const t=card.turn;
+  card.rig.style.setProperty('--hardware-turn',(180*t*t*(3-2*t))+'deg');
   return card.turn!==card.turnTarget;
 }
 function animate(time) {
-  const dt = Math.min((time-lastTime)/1000,.05); lastTime=time;
+  const elapsed=Math.max(0,(time-lastTime)/1000); lastTime=time;
+  const dt=Math.min(elapsed,.05);
   let active=false;
   for (const c of cards) {
-    if(advanceTurn(c,dt)) active=true;
+    if(advanceTurn(c,elapsed)) active=true;
     if(reduced.matches) c.flex=c.flexSpeed=0;
     else {
       c.flexSpeed+=(-185*c.flex-19*c.flexSpeed)*dt;
@@ -620,9 +618,15 @@ function handRenderer(hand) {
   }
   hand.onpointerup=hand.onpointercancel=hand.onlostpointercapture=dropFeature;
   hand.onpointerleave=()=>!held && highlight(hand.contains(document.activeElement) && document.activeElement.matches(':focus-visible') ? document.activeElement : null);
-  let closeTimer;
+  let closeTimer, lastSelection;
   return function renderHand(selection) {
     clearTimeout(closeTimer);
+    const opening=selection!==null;
+    const card=cards[opening?selection:lastSelection];
+    const remaining=card?Math.abs(Number(opening)-card.turn):0;
+    const duration=reduced.matches?0:turnDurationMs*remaining;
+    hand.style.setProperty('--motion-duration',duration+'ms');
+    lastSelection=selection;
     held=null;
     hand.classList.remove('pulling');
     if(selection===null) {
@@ -630,8 +634,8 @@ function handRenderer(hand) {
       highlight(null);
       hand.classList.add('closing');
       const finish=()=>{hand.hidden=true;hand.replaceChildren()};
-      if(reduced.matches) finish();
-      else closeTimer=setTimeout(finish,280);
+      if(duration===0) finish();
+      else closeTimer=setTimeout(finish,duration);
       return;
     }
     hand.inert=false;
@@ -654,7 +658,7 @@ function handRenderer(hand) {
       const spread=selection===3?offset:offset/Math.max(1,(pack.length-1)/2);
       button.style.setProperty('--tilt',spread*(selection===3?3:4)+'deg');
       button.style.setProperty('--dip',Math.abs(spread)*.9+'svh');
-      button.style.setProperty('--delay',i*30+'ms');
+      button.style.setProperty('--delay',(duration*.22*i/Math.max(1,pack.length-1))+'ms');
       button.style.setProperty('--color',color);
       button.style.setProperty('--tint',tint);
       const face=document.createElement('span');

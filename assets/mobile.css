@@ -20,7 +20,6 @@
     filter:none;mix-blend-mode:normal;mask:none;-webkit-mask:none;
   }
   .stage .product-hand .face::after {display:none}
-  .stage .product-hand.reveal .feature {animation:none}
   .art-viewer {width:96vw;max-height:90vh;max-height:90svh;margin:auto;overflow:auto}
   .viewer-bar {position:sticky;top:0;background:#f8f6f0;z-index:1}
   .viewer-image {width:100%;height:auto;min-height:1px;object-fit:contain}
