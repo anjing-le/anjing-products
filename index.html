@@ -282,8 +282,62 @@ function paint(card) {
   card.rig.style.transform='rotate('+card.angle*.36+'deg)';
   card.joint.style.transform='translate('+card.offsetX+'px,'+Math.min(0,card.length)+'px) rotate('+card.angle*.64+'deg)';
 }
+// A hanging badge moves under gravity and tension along the strap. The
+// reel limits the restoring force on a long pull; sideways motion can swing.
+function stepSwing(c,dt) {
+  const y=c.length-c.anchorY;
+  const radius=Math.max(1,Math.hypot(c.offsetX,y));
+  const nx=c.offsetX/radius, ny=y/radius;
+  const radialSpeed=c.speedX*nx+c.velocity*ny;
+  const gravity=1600;
+  const extension=radius-(c.target-c.anchorY);
+  const tension=Math.max(0,gravity+5200*Math.tanh(extension/95)+9*radialSpeed);
+  const ax=-tension*nx-2.8*c.speedX;
+  c.speedX+=ax*dt;
+  c.velocity+=(gravity-tension*ny-2.8*c.velocity)*dt;
+  c.offsetX+=c.speedX*dt;
+  c.length+=c.velocity*dt;
+  // Inertia tips the hanging body as its attachment accelerates.
+  c.spin+=((c.restAngle-c.angle)*52-5.8*c.spin+Math.max(-480,Math.min(480,ax*.10)))*dt;
+  c.angle+=c.spin*dt;
+}
+function placeGrip(c,g) {
+  const grip=rotatePoint(g.grip.x,g.grip.y,c.angle);
+  const pivot=rotatePoint(g.pointer.x-grip.x,g.pointer.y-grip.y,-c.angle*.36);
+  c.offsetX=pivot.x;
+  c.length=pivot.y;
+}
+function swingInHand(c,g,dt) {
+  if(!g.moved || reduced.matches || dt<=0) return false;
+  const vx=(g.pointer.x-g.previous.x)/dt, vy=(g.pointer.y-g.previous.y)/dt;
+  g.previous=g.pointer;
+  const blend=1-Math.exp(-dt*16);
+  const dvx=(vx-g.vx)*blend, dvy=(vy-g.vy)*blend;
+  g.vx+=dvx; g.vy+=dvy;
+  // Moving the grip above or beside the mass applies a turning impulse.
+  const inertia=g.radius*g.radius+g.armX*g.armX+g.armY*g.armY;
+  c.spin+=(g.armY*dvx-g.armX*dvy)/inertia*180/Math.PI;
+  const equilibrium=c.restAngle+Math.max(-12,Math.min(12,g.armX/g.radius*28));
+  c.spin+=((equilibrium-c.angle)*42-8*c.spin)*dt;
+  c.spin=Math.max(-145,Math.min(145,c.spin));
+  c.angle=Math.max(-34,Math.min(34,c.angle+c.spin*dt));
+  placeGrip(c,g);
+  return Math.abs(c.spin)+Math.abs(c.angle-equilibrium)+Math.abs(g.vx)+Math.abs(g.vy)>.08;
+}
+function releaseMomentum(c,gesture,time) {
+  const samples=gesture.samples;
+  const last=samples[samples.length-1];
+  const first=samples.find(s=>s.t>=time-100);
+  if(!first || time-last.t>=100 || first===last) return;
+  const dt=Math.max(12,time-first.t)/1000;
+  const vx=(last.x-first.x)/dt, vy=(last.y-first.y)/dt;
+  const scale=Math.min(1,1500/Math.max(1,Math.hypot(vx,vy)));
+  c.speedX=vx*scale;
+  c.velocity=vy*scale;
+  c.spin=Math.max(-110,Math.min(110,(last.angle-first.angle)/dt));
+}
 function animate(time) {
-  const dt = Math.min((time-lastTime)/1000,.025); lastTime=time;
+  const dt = Math.min((time-lastTime)/1000,.05); lastTime=time;
   let active=false;
   for (const c of cards) {
     if(reduced.matches) c.flex=c.flexSpeed=0;
@@ -293,9 +347,13 @@ function animate(time) {
     }
     if(Math.abs(c.flex)+Math.abs(c.flexSpeed)>.06) active=true;
     else c.flex=c.flexSpeed=0;
-    if (drag?.card===c) {paint(c);continue;}
+    if (drag?.card===c) {if(swingInHand(c,drag,dt)) active=true;paint(c);continue;}
     if (reduced.matches) { c.length=c.target; c.angle=c.restAngle; c.offsetX=c.speedX=c.velocity=c.spin=0; }
-    else {
+    else if(c.swinging && c.target>c.anchorY+4){
+      // Substep for consistent tension and damping across refresh rates.
+      const steps=Math.max(1,Math.ceil(dt*120));
+      for(let i=0;i<steps;i++) stepSwing(c,dt/steps);
+    } else {
       c.speedX += (-c.offsetX*118-c.speedX*15)*dt;
       c.offsetX += c.speedX*dt;
       c.velocity += ((c.target-c.length)*118-c.velocity*15)*dt;
@@ -304,7 +362,7 @@ function animate(time) {
       c.angle += c.spin*dt;
     }
     if (Math.abs(c.offsetX)+Math.abs(c.speedX)+Math.abs(c.target-c.length)+Math.abs(c.velocity)+Math.abs(c.restAngle-c.angle)+Math.abs(c.spin)>.055) active=true;
-    else { c.length=c.target; c.angle=c.restAngle; c.offsetX=c.speedX=c.spin=c.velocity=0; c.unit.classList.remove('pulled'); }
+    else { c.length=c.target; c.angle=c.restAngle; c.offsetX=c.speedX=c.spin=c.velocity=0; c.swinging=false; c.unit.classList.remove('pulled'); }
     paint(c);
   }
   frame=active?requestAnimationFrame(animate):0;
@@ -317,7 +375,7 @@ function layout(initial=false) {
     const down=personal?personalOpen:product===c.index;
     const tuckedAway=!personal && !down && (personalOpen || product!==null);
     const target=down?low:tuckedAway?tucked:high;
-    if (!initial && Math.abs(c.target-target)>1) c.spin += [17,-20,15,-13][c.index];
+    if (!initial && !c.swinging && Math.abs(c.target-target)>1) c.spin += [17,-20,15,-13][c.index];
     c.target=target;
     c.button.setAttribute('aria-expanded',String(down));
     c.unit.classList.toggle('turned',down);
@@ -536,7 +594,12 @@ for(const c of cards) {
     const pointer=rotatePoint(e.clientX-anchorX,e.clientY-anchorY,-breeze);
     const pivot=rotatePoint(c.offsetX,c.length,c.angle*.36);
     const grip=rotatePoint(pointer.x-pivot.x,pointer.y-pivot.y,-c.angle);
-    drag={id:e.pointerId,card:c,x:e.clientX,y:e.clientY,anchorX,anchorY,breeze,grip,startAngle:c.angle,moved:false};
+    c.swinging=false;
+    const samples=[{t:e.timeStamp,x:c.offsetX,y:c.length,angle:c.angle}];
+    c.speedX=c.velocity=c.spin=0;
+    const radius=Math.max(20,c.button.offsetHeight*.45);
+    const armX=-grip.x, armY=c.joint.offsetHeight-c.button.offsetHeight*.5-grip.y;
+    drag={pointer,previous:pointer,vx:0,vy:0,armX,armY,radius,samples,id:e.pointerId,card:c,x:e.clientX,y:e.clientY,anchorX,anchorY,breeze,grip,moved:false};
     c.button.setPointerCapture(e.pointerId);
   };
   c.button.onpointermove=e=>{
@@ -544,19 +607,20 @@ for(const c of cards) {
     const dy=e.clientY-drag.y, dx=e.clientX-drag.x;
     if(!drag.moved && Math.hypot(dx,dy)<6) return;
     drag.moved=true;
-    c.angle=drag.startAngle-Math.max(-5,Math.min(5,dx*.035));
-    const pointer=rotatePoint(e.clientX-drag.anchorX,e.clientY-drag.anchorY,-drag.breeze);
-    const grip=rotatePoint(drag.grip.x,drag.grip.y,c.angle);
-    const pivot=rotatePoint(pointer.x-grip.x,pointer.y-grip.y,-c.angle*.36);
-    c.offsetX=pivot.x;
-    c.length=pivot.y;
-    c.speedX=c.velocity=c.spin=0;
+    drag.pointer=rotatePoint(e.clientX-drag.anchorX,e.clientY-drag.anchorY,-drag.breeze);
+    placeGrip(c,drag);
+    drag.samples.push({t:e.timeStamp,x:c.offsetX,y:c.length,angle:c.angle});
+    while(drag.samples.length>2 && drag.samples[1].t<e.timeStamp-100) drag.samples.shift();
     paint(c);
     wake();
   };
   function release(e) {
     if(drag?.id!==e.pointerId||drag.card!==c) return;
     const moved=drag.moved, distance=e.clientY-drag.y;
+    if(moved && !reduced.matches){
+      c.swinging=true;
+      if(e.type==='pointerup') releaseMomentum(c,drag,e.timeStamp);
+    }
     drag=null;
     if(moved && e.type==='pointerup') {
       c.button.addEventListener('click',ev=>{ev.stopImmediatePropagation();ev.preventDefault()},{once:true,capture:true,signal:AbortSignal.timeout(450)});
