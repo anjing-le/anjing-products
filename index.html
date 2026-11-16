@@ -241,12 +241,22 @@ body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("
 }
 .hand:not(.macos-hand):not(.cs-hand) .scene {mix-blend-mode:multiply}
 
+/* EnglishX uses the same paper-crayon artwork as its illustrated README. */
+.english .art {inset:5% 0 auto;width:100%;height:80%;object-fit:contain;mask-image:linear-gradient(transparent,#000 5% 95%,transparent)}
+.english .badge.front .name {padding-bottom:7%}
+.english .back-art {height:68%;object-fit:contain;mask-image:linear-gradient(transparent,#000 5% 95%,transparent)}
+.product-hand.english-hand {--card-width:min(24vw,35svh)}
+.english-hand .feature {aspect-ratio:2}
+.english-hand .feature + .feature {margin-left:calc(var(--card-width)*-.12)}
+.english-hand .face {background:#f8f6f0;border-radius:4.5%;box-shadow:inset 1px 1px 1px #fff9,1px 2px 1px #645d4b45,3px 8px 15px #50493927}
+.english-hand .face .scene {width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+@media(max-width:600px){.product-hand.english-hand{--card-width:64vw;width:96vw;bottom:8svh;justify-content:flex-start;overflow-x:auto;padding:6svh 2vw 2svh;pointer-events:auto}.english-hand .feature{flex:0 0 var(--card-width)}.english-hand .feature + .feature{margin-left:3vw}}
 </style>
 </head><body>
 <main class="stage" aria-label="产品">
   <canvas class="water" aria-hidden="true"></canvas>
   <div class="unit mac"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">macos-x</span><img class="art" src="assets/macos-x/badge-front-v1.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/macos-x/badge-front-v1.webp" alt="" draggable="false"></div></div></div><button class="badge-toggle" aria-label="macos-x" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
-  <div class="unit english"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">EnglishX</span><img class="art" src="assets/english.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/english.webp" alt="" draggable="false"></div></div></div><button class="badge-toggle" aria-label="EnglishX" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
+  <div class="unit english"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">EnglishX</span><img class="art" src="assets/englishx/00-brand.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/englishx/00-brand.webp" alt="" draggable="false"></div></div></div><button class="badge-toggle" aria-label="EnglishX" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
   <div class="unit cs"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">cs-tool-x</span><img class="art" src="assets/cs-tool-x/00-brand.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/cs-tool-x/00-brand.webp" alt="" draggable="false"></div></div></div><button class="badge-toggle" aria-label="cs-tool-x" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
   <div class="unit person"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><img class="portrait" src="assets/personal-front.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print personal-print"><span class="seal"></span></div></div></div><button class="badge-toggle" aria-label="安静的个人名片" aria-expanded="false"></button></div></div></div></div>
   <section class="hand product-hand" aria-label="功能牌" hidden></section>
@@ -461,6 +471,12 @@ const macosArtwork=[
   ['nearby-transfer-v1','附近互传：两台 Mac 在同一网络内连接，拖入文件或用 Command V 发送文件、文字和图片'],
   ['file-actions-v1','文件操作：选中文件唤出菜单，图片转换、压缩和缩尺寸，文档转 Markdown 或 TXT，PDF 按页导出图片']
 ];
+const englishArtwork=[
+  ['02-library','片段收藏：自己的视频加工后收入片段库；画面与数据为示意'],
+  ['03-playback','对白回放：点击句子跳转、调整倍速与金色当前词跟随'],
+  ['04-context','词句理解：单词与短语的语境含义，讲解和发音参考需核对'],
+  ['05-review','校对保存：修正原话与逐词时间，更新分析并保留旧版本']
+];
 const csArtwork=[
   ['02-shell','Shell：服务器分组、终端分屏与右侧 SFTP 控制台，操作示意'],
   ['03-data','数据：MySQL、PostgreSQL、Redis 与 ES；SQL 只读，表中为示例数据'],
@@ -469,10 +485,10 @@ const csArtwork=[
 ];
 const artworkViewer=document.querySelector('.art-viewer');
 function viewArtwork(selection,index) {
-  const [file,description]=(selection===0?macosArtwork:csArtwork)[index];
+  const [file,description]=[macosArtwork,englishArtwork,csArtwork][selection][index];
   artworkViewer.querySelector('h2').textContent=features[selection][index][0];
   const image=artworkViewer.querySelector('img');
-  image.src='assets/'+(selection===0?'macos-x/':'cs-tool-x/')+file+'.webp';
+  image.src='assets/'+['macos-x/','englishx/','cs-tool-x/'][selection]+file+'.webp';
   image.alt=description;
   artworkViewer.showModal();
 }
@@ -489,10 +505,10 @@ const features = [
     ['附近互传','#477296','#d2e4ed'],
     ['文件操作','#976b50','#f0dfc5']
   ],[
-    ['视频片段','#9c634d','#efd6bc'],
-    ['单句回放','#aa745b','#f2dfbf'],
-    ['逐词学习','#7c7491','#e2ddec'],
-    ['跟读','#758865','#dce6cf']
+    ['片段收藏','#9c634d','#efd6bc'],
+    ['对白回放','#aa745b','#f2dfbf'],
+    ['词句理解','#7c7491','#e2ddec'],
+    ['校对保存','#758865','#dce6cf']
   ],[
     ['Shell','#546c59','#d8e3cb'],
     ['数据','#617a83','#d6e5e5'],
@@ -579,6 +595,7 @@ function handRenderer(hand) {
     hand.hidden=false;
     hand.classList.toggle('macos-hand',selection===0);
     hand.classList.toggle('cs-hand',selection===2);
+    hand.classList.toggle('english-hand',selection===1);
     const pack=features[selection];
     hand.setAttribute('aria-label',cards[selection].button.getAttribute('aria-label')+' 功能牌');
     pack.forEach(([label,color,tint],i)=>{
@@ -604,15 +621,15 @@ function handRenderer(hand) {
       picture.className='scene';
       picture.alt='';
       picture.draggable=false;
-      picture.src=selection===0?'assets/macos-x/'+macosArtwork[i][0]+'.webp':selection===2?'assets/cs-tool-x/'+csArtwork[i][0]+'.webp':'assets/'+productAssets[selection]+'-'+(i+1)+'.webp';
-      picture.alt=selection===0?macosArtwork[i][1]:selection===2?csArtwork[i][1]:'';
+      picture.src='assets/'+['macos-x/','englishx/','cs-tool-x/'][selection]+[macosArtwork,englishArtwork,csArtwork][selection][i][0]+'.webp';
+      picture.alt=[macosArtwork,englishArtwork,csArtwork][selection][i][1];
       picture.loading='lazy';
         face.append(picture);
       }
       button.append(face);
       button.onfocus=()=>highlight(button);
       button.onblur=()=>highlight(null);
-      button.onclick=()=>{highlight(button);if(selection===0||selection===2)viewArtwork(selection,i)};
+      button.onclick=()=>{highlight(button);if(selection<3)viewArtwork(selection,i)};
       hand.append(button);
     });
     hand.classList.add('reveal');
