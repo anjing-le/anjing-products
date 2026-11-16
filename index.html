@@ -302,7 +302,8 @@ let frame = 0, lastTime = 0, drag = null;
 function positions(card) {
   const height = stage.clientHeight;
   const hardware = card.joint.offsetHeight;
-  const high = Math.max(8, Math.min(height * [.115,.10,.12,.032][card.index], height * .47 - hardware));
+  const spaceAboveHand=card.index<3 && stage.clientWidth>height ? .425 : .47;
+  const high = Math.max(8, Math.min(height * [.115,.10,.12,.032][card.index], height * spaceAboveHand - hardware));
   const low = high + Math.min(32, height * .032);
   const nameHeight = Math.max(28,card.button.offsetHeight*.21);
   return { high, low, tucked:nameHeight-hardware };

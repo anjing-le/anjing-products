@@ -1,6 +1,6 @@
 /* The last card shows its full face. The others share the remaining width. */
 .stage .hand.product-hand {
-  --card-width:min(43vw,72svh);
+  --card-width:min(43vw,68svh);
   width:min(91vw,calc(var(--card-width)*2.35));
   display:grid;
   grid-template-columns:repeat(var(--gaps),minmax(0,1fr)) var(--card-width);
@@ -17,6 +17,7 @@
   aspect-ratio:1.56;
   margin:0;
 }
+.stage .product-hand .feature.show .face {transform:translateY(-1.4svh) rotate(0) scale(1.025)}
 .stage .product-hand .scene {object-fit:contain;padding:0}
 .stage.both-open .product-hand {width:61vw;--card-width:min(31vw,60svh)}
 @media(max-width:600px) {
@@ -64,4 +65,8 @@
 .person .personal-print {background-position:50% 65%;background-size:120%}
 @media(max-width:780px) {
   .unit.person {right:1.5vw;--w:min(14vw,16svh)}
+}
+
+@media(min-width:781px) {
+  .stage {--w:min(24vw,26svh,324px)}
 }
