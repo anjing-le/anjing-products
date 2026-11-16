@@ -17,9 +17,10 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 }
 .stage::after { content:""; pointer-events:none; position:absolute; inset:0; box-shadow:inset 0 8px 16px -15px #514b3e; }
 .unit { width:var(--w); position:relative; perspective:1100px }
-.rig { position:absolute; width:100%; top:0; transform-origin:50% 0; will-change:transform }
+.unit.pulled {z-index:4;animation-play-state:paused}
+.rig { padding-top:var(--length); position:absolute; width:100%; top:0; transform-origin:50% 0; will-change:transform }
 .strap {
-  position:relative; width:var(--strap); margin:auto; height:var(--length); min-height:3px;
+  position:absolute; top:0; left:0; right:0; width:var(--strap); margin:auto; height:var(--ribbon-length); min-height:3px; transform-origin:50% 0; transform:rotate(var(--pull-angle));
   clip-path:var(--ribbon-outline);
   background:var(--ribbon-light,linear-gradient(transparent,transparent)),repeating-linear-gradient(37deg,#ffffff23 0 1px,transparent 1px 3px),repeating-linear-gradient(143deg,#1112 0 1px,transparent 1px 3px),linear-gradient(90deg,var(--edge),var(--fabric) 9% 90%,var(--edge));
   border-inline:1px solid #24282230; border-radius:0 0 3px 3px; box-shadow:4px 4px 5px #39382720;
@@ -64,7 +65,7 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 .hand[hidden] { display:none }
 .feature {
   width:var(--card-width); aspect-ratio:1.54; padding:0; border:none; background:transparent;
-  position:relative; cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent;
+  position:relative; cursor:pointer; touch-action:none; -webkit-tap-highlight-color:transparent;
 }
 .feature + .feature { margin-left:calc(var(--card-width) * -.60) }
 .face {
@@ -78,6 +79,10 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 .face::before {top:7%;left:8%}
 .face::after {bottom:7%;right:8%}
 .feature.show {z-index:2}
+.hand.pulling {z-index:5}
+.feature.sliding {z-index:3;translate:var(--dx) var(--dy)}
+.feature.returning {transition:translate .46s cubic-bezier(.18,.85,.25,1.07)}
+@media(prefers-reduced-motion:reduce){.feature.returning{transition:none}}
 .feature.show .face {transform:translateY(-3.7svh) rotate(0) scale(1.06);box-shadow:inset 0 0 0 3px #fff9,2px 4px 2px #645d4b38,6px 13px 20px #50493935}
 .feature:focus-visible {outline:none}
 .feature:focus-visible .face {outline:2px solid currentColor;outline-offset:3px}
@@ -202,7 +207,7 @@ const stage = document.querySelector('.stage');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const cards = [...document.querySelectorAll('.unit')].map((unit,index) => ({
   unit, index, rig:unit.querySelector('.rig'), joint:unit.querySelector('.joint'), button:unit.querySelector('.badge-toggle'),
-  length:0, velocity:0, angle:0, spin:0, target:0, restAngle:[-2,1.6,-1.1,1.3][index]
+  offsetX:0, speedX:0, length:0, velocity:0, angle:0, spin:0, target:0, restAngle:[-2,1.6,-1.1,1.3][index]
 }));
 // Project the two edges of a twisted ribbon. Its top is pinned and its tip
 // shares the ring's angle. Keep a sliver of fabric visible edge-on.
@@ -231,24 +236,29 @@ function positions(card) {
   return { high, low, tucked:nameHeight-hardware };
 }
 function paint(card) {
-  card.rig.style.setProperty('--length',Math.max(0,card.length)+'px');
-  card.rig.style.transform='translateY('+Math.min(0,card.length)+'px) rotate('+card.angle*.36+'deg)';
-  card.joint.style.transform='rotate('+card.angle*.64+'deg)';
+  const drop=Math.max(0,card.length);
+  card.rig.style.setProperty('--length',drop+'px');
+  card.rig.style.setProperty('--ribbon-length',Math.hypot(card.length,card.offsetX)+'px');
+  card.rig.style.setProperty('--pull-angle',-Math.atan2(card.offsetX,card.length)+'rad');
+  card.rig.style.transform='rotate('+card.angle*.36+'deg)';
+  card.joint.style.transform='translate('+card.offsetX+'px,'+Math.min(0,card.length)+'px) rotate('+card.angle*.64+'deg)';
 }
 function animate(time) {
   const dt = Math.min((time-lastTime)/1000,.025); lastTime=time;
   let active=false;
   for (const c of cards) {
-    if (drag?.card===c && drag.moved) continue;
-    if (reduced.matches) { c.length=c.target; c.angle=c.restAngle; c.velocity=c.spin=0; }
+    if (drag?.card===c) continue;
+    if (reduced.matches) { c.length=c.target; c.angle=c.restAngle; c.offsetX=c.speedX=c.velocity=c.spin=0; }
     else {
+      c.speedX += (-c.offsetX*118-c.speedX*15)*dt;
+      c.offsetX += c.speedX*dt;
       c.velocity += ((c.target-c.length)*118-c.velocity*15)*dt;
       c.length += c.velocity*dt;
       c.spin += ((c.restAngle-c.angle)*48-c.spin*5)*dt;
       c.angle += c.spin*dt;
     }
-    if (Math.abs(c.target-c.length)+Math.abs(c.velocity)+Math.abs(c.restAngle-c.angle)+Math.abs(c.spin)>.055) active=true;
-    else { c.length=c.target; c.angle=c.restAngle; c.spin=c.velocity=0; }
+    if (Math.abs(c.offsetX)+Math.abs(c.speedX)+Math.abs(c.target-c.length)+Math.abs(c.velocity)+Math.abs(c.restAngle-c.angle)+Math.abs(c.spin)>.055) active=true;
+    else { c.length=c.target; c.angle=c.restAngle; c.offsetX=c.speedX=c.spin=c.velocity=0; c.unit.classList.remove('pulled'); }
     paint(c);
   }
   frame=active?requestAnimationFrame(animate):0;
@@ -337,15 +347,62 @@ function handRenderer(hand) {
   function highlight(button) {
     for(const card of hand.children) card.classList.toggle('show',card===button);
   }
+  let held=null;
+  hand.onpointerdown=event=>{
+    const button=event.target.closest('.feature');
+    if(!button || held || !event.isPrimary || event.button!==0) return;
+    const translation=getComputedStyle(button).translate;
+    const [dx=0,dy=0]=translation==='none'?[]:translation.split(' ').map(parseFloat);
+    held={button,id:event.pointerId,x:event.clientX,y:event.clientY,dx,dy,moved:false};
+    button.setPointerCapture(event.pointerId);
+  };
   hand.onpointermove=event=>{
+    if(held){
+      if(event.pointerId!==held.id) return;
+      const dx=event.clientX-held.x, dy=event.clientY-held.y;
+      if(!held.moved && Math.hypot(dx,dy)<6) return;
+      const button=held.button;
+      if(!held.moved){
+        held.moved=true;
+        const face=button.querySelector('.face');
+        face.style.transform=getComputedStyle(face).transform;
+        hand.classList.add('pulling');
+        button.classList.remove('returning');
+        button.classList.add('sliding');
+        highlight(button);
+      }
+      button.style.setProperty('--dx',held.dx+dx+'px');
+      button.style.setProperty('--dy',held.dy+dy+'px');
+      return;
+    }
     if(event.pointerType==='touch') return;
     const face=event.target.closest('.face');
     if(face) highlight(face.closest('.feature'));
   };
-  hand.onpointerleave=()=>highlight(hand.contains(document.activeElement) && document.activeElement.matches(':focus-visible') ? document.activeElement : null);
+  function dropFeature(event){
+    if(!held || held.id!==event.pointerId) return;
+    const {button,moved}=held;
+    held=null;
+    if(!moved) return;
+    button.querySelector('.face').style.removeProperty('transform');
+    button.classList.add('returning');
+    button.style.setProperty('--dx','0px');
+    button.style.setProperty('--dy','0px');
+    const clean=()=>{
+      if(held?.button===button || !button.classList.contains('returning')) return;
+      button.classList.remove('sliding','returning');
+      if(!hand.querySelector('.sliding')) hand.classList.remove('pulling');
+    };
+    Promise.allSettled(button.getAnimations().filter(a=>a.transitionProperty==='translate').map(a=>a.finished)).then(clean);
+    if(event.type==='pointerup') button.addEventListener('click',e=>{e.stopImmediatePropagation();e.preventDefault()},{capture:true,once:true,signal:AbortSignal.timeout(400)});
+  }
+  hand.onpointerup=hand.onpointercancel=hand.onlostpointercapture=dropFeature;
+  hand.onpointerleave=()=>!held && highlight(hand.contains(document.activeElement) && document.activeElement.matches(':focus-visible') ? document.activeElement : null);
   let closeTimer;
   return function renderHand(selection) {
     clearTimeout(closeTimer);
+    held=null;
+    hand.classList.remove('pulling');
     if(selection===null) {
       hand.inert=true;
       highlight(null);
@@ -401,11 +458,22 @@ function handRenderer(hand) {
 }
 const showProductHand=handRenderer(document.querySelector(".product-hand"));
 const showPersonalHand=handRenderer(document.querySelector(".personal-hand"));
+function rotatePoint(x,y,degrees) {
+  const a=degrees*Math.PI/180;
+  return {x:x*Math.cos(a)-y*Math.sin(a),y:x*Math.sin(a)+y*Math.cos(a)};
+}
 for(const c of cards) {
   c.button.onclick=()=>activate(c);
   c.button.onpointerdown=e=>{
     if(!e.isPrimary||e.button!==0||drag) return;
-    drag={id:e.pointerId,card:c,x:e.clientX,y:e.clientY,start:c.length,moved:false};
+    c.unit.classList.add('pulled');
+    const bounds=c.unit.getBoundingClientRect();
+    const anchorX=bounds.left+bounds.width/2, anchorY=bounds.top+bounds.height/2;
+    const breeze=parseFloat(getComputedStyle(c.unit).rotate)||0;
+    const pointer=rotatePoint(e.clientX-anchorX,e.clientY-anchorY,-breeze);
+    const pivot=rotatePoint(c.offsetX,c.length,c.angle*.36);
+    const grip=rotatePoint(pointer.x-pivot.x,pointer.y-pivot.y,-c.angle);
+    drag={id:e.pointerId,card:c,x:e.clientX,y:e.clientY,anchorX,anchorY,breeze,grip,startAngle:c.angle,moved:false};
     c.button.setPointerCapture(e.pointerId);
   };
   c.button.onpointermove=e=>{
@@ -413,9 +481,14 @@ for(const c of cards) {
     const dy=e.clientY-drag.y, dx=e.clientX-drag.x;
     if(!drag.moved && Math.hypot(dx,dy)<6) return;
     drag.moved=true;
-    const {tucked}=positions(c);
-    c.length=Math.max(tucked-5,Math.min(stage.clientHeight-c.joint.offsetHeight,drag.start+dy));
-    c.angle=Math.max(-8,Math.min(8,-dx*.12)); c.velocity=c.spin=0; paint(c);
+    c.angle=drag.startAngle-Math.max(-5,Math.min(5,dx*.035));
+    const pointer=rotatePoint(e.clientX-drag.anchorX,e.clientY-drag.anchorY,-drag.breeze);
+    const grip=rotatePoint(drag.grip.x,drag.grip.y,c.angle);
+    const pivot=rotatePoint(pointer.x-grip.x,pointer.y-grip.y,-c.angle*.36);
+    c.offsetX=pivot.x;
+    c.length=pivot.y;
+    c.speedX=c.velocity=c.spin=0;
+    paint(c);
   };
   function release(e) {
     if(drag?.id!==e.pointerId||drag.card!==c) return;
