@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 84"><defs><linearGradient id="steel" x1="0" x2=".96" y1="0" y2=".27" gradientUnits="objectBoundingBox"><stop stop-color="#484843"/><stop offset=".18" stop-color="#9a9e99"/><stop offset=".36" stop-color="#f7f7ec"/><stop offset=".52" stop-color="#cbcfc7"/><stop offset=".72" stop-color="#72766f"/><stop offset="1" stop-color="#363c38"/></linearGradient></defs><path d="M15 5 Q20 1 24 5 L25 13 Q21 17 16 14 Z" fill="url(#steel)" stroke="#787b73" stroke-width=".8"/>
+<path d="M21 13 C11 17 10 27 10 38 L11 67 C11 76 13 80 20 80 L23 78" fill="none" stroke="#50544f" stroke-width="6.2" stroke-linecap="round"/>
+<path d="M21 13 C11 17 10 27 10 38 L11 67 C11 76 13 80 20 80 L23 78" fill="none" stroke="url(#steel)" stroke-width="4.6" stroke-linecap="round"/>
+<path d="M16 18 Q11 24 11 37 L12 66 Q12 76 16 77" fill="none" stroke="#fffdf1" stroke-width="1.1" stroke-linecap="round"/>
+</svg>
