@@ -142,8 +142,6 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 .badge-turn .reverse {background:transparent;border:0;box-shadow:none}
 .print {position:absolute;inset:0;background:var(--stock);border:1px solid #45483b38;border-radius:inherit;overflow:hidden}
 .back-art {width:100%;height:65%;object-fit:cover;display:block}
-.reverse-name {position:absolute;top:65%;left:9%;font-weight:600;font-size:calc(var(--w)*.105);letter-spacing:-.055em}
-.personal-print .reverse-name {left:0;right:0;top:43%;text-align:center;font-family:Georgia,serif;font-size:calc(var(--w)*.22)}
 .product-print {mask:url("assets/download-cutouts.svg") center/100% 100%}
 .badge-toggle {position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;border-radius:calc(var(--w)*.074);background:transparent;touch-action:none;user-select:none;-webkit-tap-highlight-color:transparent}
 .badge-toggle:focus-visible {outline:2px solid #536c74;outline-offset:2px}
@@ -173,9 +171,7 @@ body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("
 .person .portrait {position:absolute;inset:-2%;width:104%;height:104%;display:block;object-fit:cover}
 /* macos-x: one continuous printed surface; hardware and depth stay in CSS. */
 .mac {--stock:#cbdff0;--ink:#293c4a}
-.mac .badge.front .name {background:none;padding-bottom:7%;font-size:calc(var(--w)*.145)}
 .mac .back-art {height:73%;object-position:center 28%}
-.mac .reverse-name {top:69%}
 .product-hand.macos-hand {--card-width:min(32vw,45svh)}
 .macos-hand .feature {aspect-ratio:2}
 .macos-hand .feature + .feature {margin-left:calc(var(--card-width)*-.76)}
@@ -192,7 +188,6 @@ body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("
 /* cs-tool-x: reuse README art without stretching or cropping its labels. */
 .cs {--stock:#d8ddbe}
 .cs .art {inset:5% 0 auto;width:100%;height:80%;object-fit:contain;mask-image:linear-gradient(transparent,#000 5% 95%,transparent)}
-.cs .badge.front .name {padding-bottom:7%}
 .cs .back-art {height:68%;object-fit:contain}
 .product-hand.cs-hand {--card-width:min(24vw,35svh)}
 .cs-hand .feature {aspect-ratio:2}
@@ -200,13 +195,32 @@ body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("
 .cs-hand .face {background:#f8f6f0;border-radius:4.5%;box-shadow:inset 1px 1px 1px #fff9,1px 2px 1px #645d4b45,3px 8px 15px #50493927}
 .cs-hand .scene {object-fit:contain}
 @media(max-width:600px){.product-hand.cs-hand{--card-width:64vw;width:96vw;bottom:8svh;justify-content:flex-start;overflow-x:auto;padding:6svh 2vw 2svh;pointer-events:auto}.cs-hand .feature{flex:0 0 var(--card-width)}.cs-hand .feature + .feature{margin-left:3vw}}
+/* Polished edges catch the light; the artwork sits inside the clear shell. */
+.unit:not(.person) .front,.product-print {
+  background:linear-gradient(130deg,#fff5,transparent 30% 65%,#fff3),color-mix(in srgb,var(--stock) 24%,transparent);
+  border:1px solid #ffffff9c;
+  box-shadow:inset 1px 1px 1px #ffffffe0,inset -1px -2px 1px #34444155,inset 0 0 0 2px #ffffff36;
+}
+.unit:not(.person) .front .art,.product-print .back-art {
+  position:absolute;inset:11% 5% auto;width:90%;height:68%;
+  object-fit:contain;mask-image:none;border-radius:calc(var(--w)*.048);
+}
+.unit.mac .front .art,.mac .product-print .back-art {object-fit:cover;object-position:center 36%}
+.unit:not(.person) .front .name {
+  inset:auto 0 3.8%;padding:0;text-align:center;line-height:1.15;
+  font-size:calc(var(--w)*.123);letter-spacing:-.045em;font-weight:650;
+  color:transparent;background-color:color-mix(in srgb,var(--ink) 80%,#87938a);
+  background-image:repeating-linear-gradient(116deg,#ffffff24 0 .6px,transparent .7px 2px);
+  background-clip:text;-webkit-background-clip:text;
+  filter:drop-shadow(0 -.65px .25px #26332f8a) drop-shadow(0 1px .2px #ffffffda);
+}
 </style>
 </head><body>
 <main class="stage" aria-label="产品">
   <canvas class="water" aria-hidden="true"></canvas>
-  <div class="unit mac"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">macos-x</span><img class="art" src="assets/macos-x/badge-front-v1.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/macos-x/badge-front-v1.webp" alt="" draggable="false"><span class="reverse-name">macos-x</span></div></div></div><button class="badge-toggle" aria-label="macos-x" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
-  <div class="unit english"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">EnglishX</span><img class="art" src="assets/english.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/english.webp" alt="" draggable="false"><span class="reverse-name">EnglishX</span></div></div></div><button class="badge-toggle" aria-label="EnglishX" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
-  <div class="unit cs"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">cs-tool-x</span><img class="art" src="assets/cs-tool-x/00-brand.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/cs-tool-x/00-brand.webp" alt="" draggable="false"><span class="reverse-name">cs-tool-x</span></div></div></div><button class="badge-toggle" aria-label="cs-tool-x" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
+  <div class="unit mac"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">macos-x</span><img class="art" src="assets/macos-x/badge-front-v1.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/macos-x/badge-front-v1.webp" alt="" draggable="false"></div></div></div><button class="badge-toggle" aria-label="macos-x" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
+  <div class="unit english"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">EnglishX</span><img class="art" src="assets/english.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/english.webp" alt="" draggable="false"></div></div></div><button class="badge-toggle" aria-label="EnglishX" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
+  <div class="unit cs"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">cs-tool-x</span><img class="art" src="assets/cs-tool-x/00-brand.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/cs-tool-x/00-brand.webp" alt="" draggable="false"></div></div></div><button class="badge-toggle" aria-label="cs-tool-x" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
   <div class="unit person"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><img class="portrait" src="assets/personal-front.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print personal-print"><span class="seal"></span></div></div></div><button class="badge-toggle" aria-label="安静的个人名片" aria-expanded="false"></button></div></div></div></div>
   <section class="hand product-hand" aria-label="功能牌" hidden></section>
   <section class="hand personal-hand" aria-label="个人介绍" hidden></section>
