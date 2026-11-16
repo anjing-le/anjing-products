@@ -12,7 +12,8 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 .stage {
   position:relative; isolation:isolate; overflow:hidden; height:100vh; height:100svh;
   display:flex; justify-content:center; align-items:flex-start; gap:clamp(8px,4.3vw,80px);
-  background:#e8e4d5 url("assets/marble.webp") center / cover;
+  background:linear-gradient(#eeeae4bd,#eeeae4bd),url("assets/marble.webp") center / cover,#878787;
+  background-blend-mode:normal,luminosity;
   --w:min(24vw,29svh,324px); --strap:min(2.8vw,36px); --metal:linear-gradient(103deg,#393c38 0%,#acaca6 17%,#fafbf2 32%,#676b65 48%,#e1e2d7 69%,#4a4d48 91%);
 }
 .stage::after { content:""; pointer-events:none; position:absolute; inset:0; box-shadow:inset 0 8px 16px -15px #514b3e; }

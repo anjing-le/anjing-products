@@ -47,12 +47,13 @@ if (gl) {
       vec2 slope=vec2(.65*wave1-.52*wave2,.76*wave1+.33*wave2);
       vec2 fit=min(vec2(aspect/textureAspect,textureAspect/aspect),vec2(1.));
       vec2 lookup=.5+(uv-.5+.005*slope/vec2(aspect,1.))*fit*.985;
-      vec3 base=texture2D(stone,lookup).rgb*vec3(.87,.955,.961);
-      float web=caustic(p*7.5+vec2(t*.048,-t*.028),t);
+      float grain=dot(texture2D(stone,lookup).rgb,vec3(.3,.59,.11));
+      vec3 base=mix(vec3(grain),vec3(238.,234.,228.)/255.,.74);
+      float web=caustic(p*5.3+vec2(t*.048,-t*.028),t);
       float sunlight=.52+.32*sin(p.x*3.+p.y*4.+.5*wave2);
-      vec3 transmitted=base*(.955+.025*wave2)+vec3(1.,.96,.80)*web*.22*sunlight;
+      vec3 transmitted=base*(.985+.009*wave2)+vec3(1.,.99,.97)*web*.10*sunlight;
       float glint=pow(max(0.,slope.y*.78+slope.x*.24),12.);
-      gl_FragColor=vec4(transmitted+.052*glint,1.);
+      gl_FragColor=vec4(transmitted+.025*glint,1.);
     }`));
   gl.linkProgram(program);
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw Error(gl.getProgramInfoLog(program));
