@@ -42,3 +42,26 @@
   object-fit:cover;
   mask-image:none;
 }
+
+/* The personal tag is a small maple board with the drawing printed into its grain. */
+.unit.person {--w:min(12vw,15.5svh,148px);right:2vw}
+.person .badge-turn .badge,.person .personal-print,.person .badge-toggle {
+  border-radius:calc(var(--w)*.085);
+}
+.person .badge.front,.person .personal-print {
+  background:#e6c9a1 url("maple-grain.webp") center/cover;
+  border:1px solid #ac89637a;
+  box-shadow:inset 0 1px 1px #fff4dcbe,inset 1px 0 1px #ffefd28c,inset 0 -2px 1px #956d4380;
+}
+.person .badge .portrait {
+  z-index:0;
+  inset:0;
+  width:100%;
+  height:100%;
+  mix-blend-mode:multiply;
+  filter:brightness(1.09);
+}
+.person .personal-print {background-position:50% 65%;background-size:120%}
+@media(max-width:780px) {
+  .unit.person {right:1.5vw;--w:min(14vw,16svh)}
+}
