@@ -1,0 +1,9 @@
+Tool: built-in image_gen
+Edit target: docs/artwork/personal/github-v1.png
+Material reference: assets/english-4.webp
+Original: docs/artwork/personal/github-v2.png
+Web asset: assets/personal/github-v2.webp
+
+Edit image 1, the approved GitHub personal-card illustration. Image 2 is a MATERIAL AND DEPTH REFERENCE ONLY: the EnglishX microphone artwork made from thin colored paper layers on textured white stock.
+Keep image 1's exact landscape 2:1 composition, yellow-haired Anjing with black hoodie and pencil at the left, blue river, green islands, mountain silhouettes, paper-crane boat, people, bridge, distant door, colors, pencil/crayon strokes, and the blank bottom-left label area. Do not add, remove or relocate any object or text.
+Change ONLY the physical construction: render the existing illustrated silhouettes as delicately hand-cut thin colored-paper pieces assembled directly on the same warm-white cotton card. The boy's hair, face, hoodie, hand and pencil have separate shallow overlapping layers; islands/grass, mountain shapes, crane folds, bridge planks, clouds and stars have fine paper cut edges and subtle relief. Keep the blue river and sketched unfinished landscape mostly drawn on the base paper, so the scene has only a few quiet depth levels, not a bulky diorama. Use visible fine crayon marks on the paper pieces. Warm diffuse light from upper left produces consistent very soft, short down-right contact shadows, thin warm-white cut edges where appropriate, like reference 2. The effect must be clearly tactile but modest: thin cardstock, not thick foam, clay, plastic, bevelled 3D, glossy toys or giant sticker outlines. No broad white border around the whole illustration; no rectangular backing panel under it. Preserve all margins and the large blank bottom strip. No new text or logo. No outside card edge, frame, perspective, scene or desk. Full rectangular paper canvas.

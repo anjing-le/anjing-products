@@ -1,0 +1,9 @@
+Tool: built-in image_gen
+Edit target: docs/artwork/personal/home-v1.png
+Material reference: assets/english-4.webp
+Original: docs/artwork/personal/home-v2.png
+Web asset: assets/personal/home-v2.webp
+
+Edit image 1, the approved anjing.cc personal-homepage card. Image 2 is ONLY a thin paper-layer depth/material reference (EnglishX microphone on cotton paper).
+Keep image 1's exact 2:1 canvas, character identity, face, eyes, expression, yellow hair silhouette, graphite accent strokes, black crayon hoodie, position, size, pale warm-white paper and generous negative space absolutely unchanged. No new objects, text or decorative elements.
+Change ONLY the character's material/depth so it is delicately assembled from thin hand-cut colored paper on this same white card. Make the yellow hair a subtly layered cut-paper silhouette over the face; face and small ears a fine pale-peach paper layer; hoodie thin charcoal-black cut-paper shapes with preserved visible crayon grain and overlapping collar/hood pieces. Fine warm-white/beige paper cut edges and short soft contact shadows down-right from diffuse upper-left light. Accent marks remain simple graphite strokes on the base paper or extremely shallow little paper marks, not bulky objects. Each layer should be only slightly raised, like the tactile reference, a few thin cardstock layers rather than foam or a thick 3D model. Preserve the hand-drawn dark outline where it defines the character but do not add a broad white sticker border or circular/rectangular backing. Keep all the lower-left blank label area intact. No overall figure enlargement, layout changes, framed portrait, heavy shadow, plastic, clay, gloss, desk, card exterior or perspective.
