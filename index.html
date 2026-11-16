@@ -118,21 +118,49 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 @media(max-width:780px){.stage{padding-right:14vw;--w:min(24vw,27svh);gap:2.4vw}.person{right:1.8vw;--w:12vw}.person .name{font-size:clamp(9px,2.5vw,14px)}}
 @media(max-width:600px){.feature{aspect-ratio:1.26}.scene{object-fit:fill}}
 @media(prefers-reduced-motion:reduce){.unit{animation:none}}
+
+.mount {perspective:calc(var(--w) * 4.5)}
+.badge-turn {position:relative;width:100%;aspect-ratio:.78;transform-style:preserve-3d;transition:transform .68s cubic-bezier(.32,.02,.18,1)}
+.turned .badge-turn {transform:rotateY(180deg)}
+.badge-turn .badge {position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;margin:0}
+.front {transform:rotateY(0deg)}
+.reverse {transform:rotateY(180deg)}
+.badge-turn .reverse {background:transparent;border:0;box-shadow:none}
+.print {position:absolute;inset:0;background:var(--stock);border:1px solid #45483b38;border-radius:inherit;overflow:hidden}
+.back-art {width:100%;height:65%;object-fit:cover;display:block}
+.reverse-name {position:absolute;top:65%;left:9%;font-weight:600;font-size:calc(var(--w)*.105);letter-spacing:-.055em}
+.personal-print .reverse-name {left:0;right:0;top:43%;text-align:center;font-family:Georgia,serif;font-size:calc(var(--w)*.22)}
+.product-print {mask:url("assets/download-cutouts.svg") center/100% 100%}
+.badge-toggle {position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;border-radius:calc(var(--w)*.074);background:transparent;touch-action:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.badge-toggle:focus-visible {outline:2px solid #536c74;outline-offset:2px}
+.platforms {position:absolute;inset:78% 8% 9%;display:flex;justify-content:space-between;opacity:0;pointer-events:none}
+.turned .platforms {opacity:1;transition:opacity .16s .46s}
+.platforms button {width:46.43%;padding:0;border:1px solid #695f4d40;border-radius:calc(var(--w)*.043);background:transparent;color:var(--ink);font:600 clamp(8px,calc(var(--w)*.059),17px)/1 system-ui;transition:background .16s,box-shadow .16s}
+.turned .platforms button {pointer-events:auto}
+.platforms button:hover,.platforms button:focus-visible {background:#fff9;box-shadow:inset 0 1px 4px #786d5530}
+.unit.person {animation-name:personal-wind;animation-play-state:running}
+@keyframes personal-wind {from {rotate:-2.4deg} to {rotate:2.1deg}}
+@media(prefers-reduced-motion:reduce){.badge-turn,.turned .platforms{transition:none}.unit.person{animation:none}}
+@media(pointer:fine){
+body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("assets/cursor-arrow-1.png") 1x,url("assets/cursor-arrow-2.png") 2x) 4 2,default}
+.badge-toggle,.feature,.platforms button {cursor:url("assets/cursor-open-1.png") 11 12,pointer;cursor:image-set(url("assets/cursor-open-1.png") 1x,url("assets/cursor-open-2.png") 2x) 11 12,pointer}
+.badge-toggle:active {cursor:url("assets/cursor-closed-1.png") 11 12,grabbing;cursor:image-set(url("assets/cursor-closed-1.png") 1x,url("assets/cursor-closed-2.png") 2x) 11 12,grabbing}
+}
 </style>
 </head><body>
 <main class="stage" aria-label="产品">
   <canvas class="water" aria-hidden="true"></canvas>
-  <div class="unit mac"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><button class="badge" aria-label="macos-x" aria-expanded="false"><span class="name">macos-x</span><img class="art" src="assets/mac.webp" alt="" draggable="false"></button></div></div></div></div>
-  <div class="unit english"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><button class="badge" aria-label="EnglishX" aria-expanded="false"><span class="name">EnglishX</span><img class="art" src="assets/english.webp" alt="" draggable="false"></button></div></div></div></div>
-  <div class="unit cs"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><button class="badge" aria-label="cs-tool-x" aria-expanded="false"><span class="name">cs-tool-x</span><img class="art" src="assets/cs.webp" alt="" draggable="false"></button></div></div></div></div>
-  <div class="unit person"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><button class="badge" aria-label="安静的个人名片" aria-expanded="false"><span class="seal" aria-hidden="true"></span><span class="name">安静</span></button></div></div></div></div>
+  <div class="unit mac"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">macos-x</span><img class="art" src="assets/mac.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/mac.webp" alt="" draggable="false"><span class="reverse-name">macos-x</span></div></div></div><button class="badge-toggle" aria-label="macos-x" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
+  <div class="unit english"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">EnglishX</span><img class="art" src="assets/english.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/english.webp" alt="" draggable="false"><span class="reverse-name">EnglishX</span></div></div></div><button class="badge-toggle" aria-label="EnglishX" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
+  <div class="unit cs"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">cs-tool-x</span><img class="art" src="assets/cs.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/cs.webp" alt="" draggable="false"><span class="reverse-name">cs-tool-x</span></div></div></div><button class="badge-toggle" aria-label="cs-tool-x" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
+  <div class="unit person"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="seal" aria-hidden="true"></span><span class="name">安静</span></div><div class="badge reverse" aria-hidden="true"><div class="print personal-print"><span class="reverse-name">安静</span></div></div></div><button class="badge-toggle" aria-label="安静的个人名片" aria-expanded="false"></button></div></div></div></div>
   <section class="hand" aria-label="功能牌" hidden></section>
 </main>
 <script>
 const stage = document.querySelector('.stage');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const cards = [...document.querySelectorAll('.unit')].map((unit,index) => ({
-  unit, index, rig:unit.querySelector('.rig'), joint:unit.querySelector('.joint'), button:unit.querySelector('button'),
+  unit, index, rig:unit.querySelector('.rig'), joint:unit.querySelector('.joint'), button:unit.querySelector('.badge-toggle'),
   length:0, velocity:0, angle:0, spin:0, target:0, restAngle:[-2,1.6,-1.1,1.3][index]
 }));
 let selection = null, frame = 0, lastTime = 0, drag = null;
@@ -176,6 +204,9 @@ function layout(initial=false) {
     if (!initial && Math.abs(c.target-target)>1) c.spin += [17,-20,15,-13][c.index];
     c.target=target;
     c.button.setAttribute('aria-expanded',String(down));
+    c.unit.classList.toggle('turned',down);
+    const platforms=c.unit.querySelector('.platforms');
+    if(platforms) platforms.inert=!down;
     if(initial) { c.length=target;c.angle=c.restAngle;paint(c); }
   }
   wake();
