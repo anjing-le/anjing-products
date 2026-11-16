@@ -176,9 +176,9 @@ body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("
 .mac .badge.front .name {background:none;padding-bottom:7%;font-size:calc(var(--w)*.145)}
 .mac .back-art {height:73%;object-position:center 28%}
 .mac .reverse-name {top:69%}
-.product-hand.macos-hand {--card-width:min(36vw,45svh)}
+.product-hand.macos-hand {--card-width:min(32vw,45svh)}
 .macos-hand .feature {aspect-ratio:2}
-.macos-hand .feature + .feature {margin-left:calc(var(--card-width)*-.70)}
+.macos-hand .feature + .feature {margin-left:calc(var(--card-width)*-.76)}
 .macos-hand .face {background:#f8f6f0;border-radius:4.5%;box-shadow:inset 1px 1px 1px #fff9,1px 2px 1px #645d4b45,3px 8px 15px #50493927}
 .macos-hand .scene {object-fit:contain}
 .art-viewer {width:min(94vw,1400px);max-width:none;max-height:92svh;padding:0;border:1px solid #d9d5c9;border-radius:16px;background:#f8f6f0;color:#3b3b36;box-shadow:0 24px 90px #2227}
@@ -188,7 +188,7 @@ body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("
 .viewer-bar button {min-width:44px;min-height:44px;border:0;border-radius:50%;background:transparent;color:inherit;font:24px/1 system-ui;cursor:pointer}
 .viewer-bar button:hover {background:#e9e5db}
 .viewer-image {display:block;width:100%;height:auto}
-@media(max-width:600px){.product-hand.macos-hand{--card-width:62vw;bottom:13svh}.macos-hand .feature + .feature{margin-left:calc(var(--card-width)*-.89)}.art-viewer{width:96vw;border-radius:10px}.viewer-bar{padding:6px 12px}}
+@media(max-width:600px){.product-hand.macos-hand{--card-width:62vw;bottom:13svh}.macos-hand .feature + .feature{margin-left:calc(var(--card-width)*-.925)}.art-viewer{width:96vw;border-radius:10px}.viewer-bar{padding:6px 12px}}
 </style>
 </head><body>
 <main class="stage" aria-label="产品">
@@ -347,7 +347,9 @@ const macosArtwork=[
   ['prompts','提示词库：呼出轮盘并选择复制'],
   ['layout','窗口布局：拖动到边缘或使用快捷键'],
   ['menu-bar','菜单栏收纳：Command 拖动到苹果左侧，悬停展开'],
-  ['system-status','系统状态：CPU、内存和网速示意']
+  ['system-status-v2','系统状态：CPU、内存、网速与启动磁盘容量，图中为示意数据'],
+  ['nearby-transfer-v1','附近互传：两台 Mac 在同一网络内连接，拖入文件或用 Command V 发送文件、文字和图片'],
+  ['file-actions-v1','文件操作：选中文件唤出菜单，图片转换、压缩和缩尺寸，文档转 Markdown 或 TXT，PDF 按页导出图片']
 ];
 const artworkViewer=document.querySelector('.art-viewer');
 function viewMacosArtwork(index) {
@@ -364,10 +366,12 @@ const features = [
   [
     ['截图与编辑','#477296','#d2e4ed'],
     ['窗口切换','#667097','#dedff1'],
-    ['提示词','#976b50','#f0dfc5'],
+    ['提示词库','#976b50','#f0dfc5'],
     ['窗口布局','#557f73','#d6e7d8'],
     ['菜单栏收纳','#477296','#d2e4ed'],
-    ['系统状态','#557f73','#d6e7d8']
+    ['系统状态','#557f73','#d6e7d8'],
+    ['附近互传','#477296','#d2e4ed'],
+    ['文件操作','#976b50','#f0dfc5']
   ],[
     ['视频片段','#9c634d','#efd6bc'],
     ['单句回放','#aa745b','#f2dfbf'],
