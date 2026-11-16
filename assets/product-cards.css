@@ -70,3 +70,12 @@
 @media(min-width:781px) {
   .stage {--w:min(24vw,26svh,324px)}
 }
+
+/* Download controls share the printed insert and turn as part of its face. */
+.unit .badge.reverse .product-print img.back-art {
+  z-index:0;
+  height:52%;
+  object-fit:contain;
+}
+.product-print .platforms button {background:#ffffff36}
+.product-print .platforms button:is(:hover,:focus-visible) {background:#ffffffa8}
