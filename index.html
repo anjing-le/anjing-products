@@ -252,6 +252,7 @@ body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("
 .english-hand .face .scene {width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
 @media(max-width:600px){.product-hand.english-hand{--card-width:64vw;width:96vw;bottom:8svh;justify-content:flex-start;overflow-x:auto;padding:6svh 2vw 2svh;pointer-events:auto}.english-hand .feature{flex:0 0 var(--card-width)}.english-hand .feature + .feature{margin-left:3vw}}
 </style>
+<link rel="stylesheet" href="assets/product-cards.css">
 </head><body>
 <main class="stage" aria-label="产品">
   <canvas class="water" aria-hidden="true"></canvas>
@@ -597,6 +598,7 @@ function handRenderer(hand) {
     hand.classList.toggle('cs-hand',selection===2);
     hand.classList.toggle('english-hand',selection===1);
     const pack=features[selection];
+    hand.style.setProperty('--gaps',pack.length-1);
     hand.setAttribute('aria-label',cards[selection].button.getAttribute('aria-label')+' 功能牌');
     pack.forEach(([label,color,tint],i)=>{
       const button=document.createElement('button');
@@ -604,8 +606,9 @@ function handRenderer(hand) {
       button.setAttribute('aria-label',label);
       const offset=i-(pack.length-1)/2;
       button.style.setProperty('--gather-x',(-offset*35)+'%');
-      button.style.setProperty('--tilt',offset*(selection===0?2.4:3)+'deg');
-      button.style.setProperty('--dip',Math.abs(offset)*.9+'svh');
+      const spread=selection===3?offset:offset/Math.max(1,(pack.length-1)/2);
+      button.style.setProperty('--tilt',spread*(selection===3?3:4)+'deg');
+      button.style.setProperty('--dip',Math.abs(spread)*.9+'svh');
       button.style.setProperty('--delay',i*30+'ms');
       button.style.setProperty('--color',color);
       button.style.setProperty('--tint',tint);

@@ -1,0 +1,39 @@
+/* The last card shows its full face. The others share the remaining width. */
+.stage .hand.product-hand {
+  --card-width:min(43vw,72svh);
+  width:min(91vw,calc(var(--card-width)*2.35));
+  display:grid;
+  grid-template-columns:repeat(var(--gaps),minmax(0,1fr)) var(--card-width);
+  align-items:end;
+  justify-content:center;
+  bottom:4.5svh;
+  padding:0;
+  overflow:visible;
+  pointer-events:none;
+}
+.stage .product-hand[hidden] {display:none}
+.stage .product-hand .feature {
+  width:var(--card-width);
+  aspect-ratio:1.56;
+  margin:0;
+}
+.stage .product-hand .scene {object-fit:contain;padding:0}
+.stage.both-open .product-hand {width:61vw;--card-width:min(31vw,60svh)}
+@media(max-width:600px) {
+  .stage .hand.product-hand,.stage.both-open .product-hand {
+    --card-width:min(64vw,66svh);
+    width:92vw;
+    bottom:8svh;
+  }
+}
+
+/* A narrow clear lip overlaps the inserted photo on both faces. */
+.unit:not(.person) .front::before,.product-print::after {
+  content:"";
+  position:absolute;
+  z-index:1;
+  inset:11% 0 22%;
+  pointer-events:none;
+  background:linear-gradient(90deg,#fcffffa6,#d9e7e733 1.5px,transparent 3px calc(100% - 3px),#52636340 calc(100% - 1.6px),#fff8);
+  box-shadow:inset 0 1px 1px #36494440,inset 0 -1px 0 #f5ffff94;
+}
