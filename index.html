@@ -164,17 +164,39 @@ body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("
 .person .badge-turn,.person .badge {aspect-ratio:1}
 .person .badge.front {border:0;border-radius:19%;background:transparent;box-shadow:none}
 .person .portrait {position:absolute;inset:-2%;width:104%;height:104%;display:block;object-fit:cover}
+/* macos-x: one continuous printed surface; hardware and depth stay in CSS. */
+.mac {--stock:#cbdff0;--ink:#293c4a}
+.mac .badge.front .name {background:none;padding-bottom:7%;font-size:calc(var(--w)*.145)}
+.mac .back-art {height:73%;object-position:center 28%}
+.mac .reverse-name {top:69%}
+.product-hand.macos-hand {--card-width:min(36vw,45svh)}
+.macos-hand .feature {aspect-ratio:2}
+.macos-hand .feature + .feature {margin-left:calc(var(--card-width)*-.70)}
+.macos-hand .face {background:#f8f6f0;border-radius:4.5%;box-shadow:inset 1px 1px 1px #fff9,1px 2px 1px #645d4b45,3px 8px 15px #50493927}
+.macos-hand .scene {object-fit:contain}
+.art-viewer {width:min(94vw,1400px);max-width:none;max-height:92svh;padding:0;border:1px solid #d9d5c9;border-radius:16px;background:#f8f6f0;color:#3b3b36;box-shadow:0 24px 90px #2227}
+.art-viewer::backdrop {background:#242b2a8c;backdrop-filter:blur(5px)}
+.viewer-bar {display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 18px;font-size:14px}
+.viewer-bar h2 {margin:0;font:inherit;font-weight:600}
+.viewer-bar button {min-width:44px;min-height:44px;border:0;border-radius:50%;background:transparent;color:inherit;font:24px/1 system-ui;cursor:pointer}
+.viewer-bar button:hover {background:#e9e5db}
+.viewer-image {display:block;width:100%;height:auto}
+@media(max-width:600px){.product-hand.macos-hand{--card-width:62vw;bottom:13svh}.macos-hand .feature + .feature{margin-left:calc(var(--card-width)*-.89)}.art-viewer{width:96vw;border-radius:10px}.viewer-bar{padding:6px 12px}}
 </style>
 </head><body>
 <main class="stage" aria-label="产品">
   <canvas class="water" aria-hidden="true"></canvas>
-  <div class="unit mac"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">macos-x</span><img class="art" src="assets/mac.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/mac.webp" alt="" draggable="false"><span class="reverse-name">macos-x</span></div></div></div><button class="badge-toggle" aria-label="macos-x" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
+  <div class="unit mac"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">macos-x</span><img class="art" src="assets/macos-x/badge-front-v1.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/macos-x/badge-front-v1.webp" alt="" draggable="false"><span class="reverse-name">macos-x</span></div></div></div><button class="badge-toggle" aria-label="macos-x" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
   <div class="unit english"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">EnglishX</span><img class="art" src="assets/english.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/english.webp" alt="" draggable="false"><span class="reverse-name">EnglishX</span></div></div></div><button class="badge-toggle" aria-label="EnglishX" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
   <div class="unit cs"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">cs-tool-x</span><img class="art" src="assets/cs.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/cs.webp" alt="" draggable="false"><span class="reverse-name">cs-tool-x</span></div></div></div><button class="badge-toggle" aria-label="cs-tool-x" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
   <div class="unit person"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><img class="portrait" src="assets/personal-front.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print personal-print"><span class="seal"></span></div></div></div><button class="badge-toggle" aria-label="安静的个人名片" aria-expanded="false"></button></div></div></div></div>
   <section class="hand product-hand" aria-label="功能牌" hidden></section>
   <section class="hand personal-hand" aria-label="个人介绍" hidden></section>
 </main>
+<dialog class="art-viewer" aria-labelledby="artwork-title">
+  <div class="viewer-bar"><h2 id="artwork-title">macos-x</h2><button type="button" aria-label="关闭大图">×</button></div>
+  <img class="viewer-image" alt="">
+</dialog>
 <script>
 const stage = document.querySelector('.stage');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -268,12 +290,33 @@ function activate(card) {
   setOpen(card,card.button.getAttribute('aria-expanded')!=='true');
 }
 const productAssets=['mac','english','cs'];
+const macosArtwork=[
+  ['capture','截图与编辑：框选、标注、提取文字与复制'],
+  ['switcher','窗口切换：Command Tab 选择窗口'],
+  ['prompts','提示词库：呼出轮盘并选择复制'],
+  ['layout','窗口布局：拖动到边缘或使用快捷键'],
+  ['menu-bar','菜单栏收纳：Command 拖动到苹果左侧，悬停展开'],
+  ['system-status','系统状态：CPU、内存和网速示意']
+];
+const artworkViewer=document.querySelector('.art-viewer');
+function viewMacosArtwork(index) {
+  const [file,description]=macosArtwork[index];
+  artworkViewer.querySelector('h2').textContent=features[0][index][0];
+  const image=artworkViewer.querySelector('img');
+  image.src='assets/macos-x/'+file+'.webp';
+  image.alt=description;
+  artworkViewer.showModal();
+}
+artworkViewer.querySelector('button').onclick=()=>artworkViewer.close();
+artworkViewer.addEventListener('click',event=>{if(event.target===artworkViewer)artworkViewer.close()});
 const features = [
   [
-    ['截图','#477296','#d2e4ed'],
+    ['截图与编辑','#477296','#d2e4ed'],
     ['窗口切换','#667097','#dedff1'],
     ['提示词','#976b50','#f0dfc5'],
-    ['窗口布局','#557f73','#d6e7d8']
+    ['窗口布局','#557f73','#d6e7d8'],
+    ['菜单栏收纳','#477296','#d2e4ed'],
+    ['系统状态','#557f73','#d6e7d8']
   ],[
     ['视频片段','#9c634d','#efd6bc'],
     ['单句回放','#aa745b','#f2dfbf'],
@@ -316,6 +359,7 @@ function handRenderer(hand) {
     hand.classList.remove('closing');
     hand.replaceChildren();
     hand.hidden=false;
+    hand.classList.toggle('macos-hand',selection===0);
     const pack=features[selection];
     hand.setAttribute('aria-label',cards[selection].button.getAttribute('aria-label')+' 功能牌');
     pack.forEach(([label,color,tint],i)=>{
@@ -324,7 +368,7 @@ function handRenderer(hand) {
       button.setAttribute('aria-label',label);
       const offset=i-(pack.length-1)/2;
       button.style.setProperty('--gather-x',(-offset*35)+'%');
-      button.style.setProperty('--tilt',offset*3+'deg');
+      button.style.setProperty('--tilt',offset*(selection===0?2.4:3)+'deg');
       button.style.setProperty('--dip',Math.abs(offset)*.9+'svh');
       button.style.setProperty('--delay',i*30+'ms');
       button.style.setProperty('--color',color);
@@ -341,13 +385,15 @@ function handRenderer(hand) {
       picture.className='scene';
       picture.alt='';
       picture.draggable=false;
-      picture.src='assets/'+productAssets[selection]+'-'+(i+1)+'.webp';
+      picture.src=selection===0?'assets/macos-x/'+macosArtwork[i][0]+'.webp':'assets/'+productAssets[selection]+'-'+(i+1)+'.webp';
+      picture.alt=selection===0?macosArtwork[i][1]:'';
+      picture.loading='lazy';
         face.append(picture);
       }
       button.append(face);
       button.onfocus=()=>highlight(button);
       button.onblur=()=>highlight(null);
-      button.onclick=()=>highlight(button);
+      button.onclick=()=>{highlight(button);if(selection===0)viewMacosArtwork(i)};
       hand.append(button);
     });
     hand.classList.add('reveal');
