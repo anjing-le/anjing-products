@@ -20,7 +20,7 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 .unit.pulled {z-index:4;animation-play-state:paused}
 .rig { padding-top:var(--length); position:absolute; width:100%; top:0; transform-origin:50% 0; will-change:transform }
 .strap {
-  position:absolute; top:0; left:0; right:0; width:var(--strap); margin:auto; height:var(--ribbon-length); min-height:3px; transform-origin:50% 0; transform:rotate(var(--pull-angle)) rotateY(var(--hardware-turn));
+  position:absolute; top:var(--anchor-y); left:0; right:0; width:var(--strap); margin:auto; height:var(--ribbon-length); min-height:3px; transform-origin:50% 0; transform:rotate(var(--pull-angle)) rotateY(var(--hardware-turn));
   background:repeating-linear-gradient(37deg,#ffffff23 0 1px,transparent 1px 3px),repeating-linear-gradient(143deg,#1112 0 1px,transparent 1px 3px),linear-gradient(90deg,var(--edge),var(--fabric) 9% 90%,var(--edge));
   border-inline:1px solid #24282230; border-radius:0 0 3px 3px; box-shadow:4px 4px 5px #39382720;
 }
@@ -130,7 +130,8 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 @property --hardware-turn {syntax:"<angle>";inherits:true;initial-value:0deg}
 .rig {--hardware-turn:0deg;transition:--hardware-turn .68s cubic-bezier(.32,.02,.18,1)}
 .turned .rig {--hardware-turn:180deg}
-.ring,.mount::before,.mount::after,.badge-turn {transform:rotateY(var(--hardware-turn))}
+.ring {transform-origin:50% 100%;transform:rotate(var(--ring-angle)) rotateY(var(--hardware-turn))}
+.mount::before,.mount::after,.badge-turn {transform:rotateY(var(--hardware-turn))}
 .badge-turn {transition:none}
 @media(prefers-reduced-motion:reduce){.rig{transition:none}}
 .badge-turn .badge {position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;margin:0}
@@ -221,8 +222,15 @@ function positions(card) {
 function paint(card) {
   const drop=Math.max(0,card.length);
   card.rig.style.setProperty('--length',drop+'px');
-  card.rig.style.setProperty('--ribbon-length',Math.hypot(card.length,card.offsetX)+'px');
-  card.rig.style.setProperty('--pull-angle',-Math.atan2(card.offsetX,card.length)+'rad');
+  // Aim at the ring's lower hinge so the ribbon and ring form one line
+  // while the clasp and badge remain free to swing around that hinge.
+  const jointAngle=card.angle*.64;
+  const hinge=rotatePoint(0,card.hingeY,jointAngle);
+  const dx=card.offsetX+hinge.x, dy=card.length+hinge.y-card.anchorY;
+  const direction=-Math.atan2(dx,dy);
+  card.rig.style.setProperty('--ribbon-length',Math.max(0,Math.hypot(dx,dy)-card.ringHeight+2)+'px');
+  card.rig.style.setProperty('--pull-angle',direction+'rad');
+  card.joint.style.setProperty('--ring-angle',(direction-jointAngle*Math.PI/180)+'rad');
   card.rig.style.transform='rotate('+card.angle*.36+'deg)';
   card.joint.style.transform='translate('+card.offsetX+'px,'+Math.min(0,card.length)+'px) rotate('+card.angle*.64+'deg)';
 }
@@ -260,6 +268,12 @@ function layout(initial=false) {
     c.unit.classList.toggle('turned',down);
     const platforms=c.unit.querySelector('.platforms');
     if(platforms) platforms.inert=!down;
+    const ring=c.joint.querySelector('.ring');
+    const ringStyle=getComputedStyle(ring);
+    c.ringHeight=parseFloat(ringStyle.height);
+    c.hingeY=c.ringHeight+parseFloat(ringStyle.marginTop);
+    c.anchorY=-Math.max(24,ring.offsetWidth);
+    c.rig.style.setProperty('--anchor-y',c.anchorY+'px');
     if(initial) { c.length=target;c.angle=c.restAngle;paint(c); }
   }
   wake();
