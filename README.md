@@ -15,6 +15,6 @@
 - 输出目录：`dist`
 - 正式域名：`product.anjing.cc`
 
-目标部署方式为 GitHub 推送触发 Cloudflare Pages 自动构建。只对本仓库授权；其他分支不更新生产站点。
+推送 `main` 后由 Cloudflare Pages 自动构建并更新正式域名。Cloudflare 应用仅新增本仓库授权；其他分支不更新生产站点。
 部署验收时对照 `/build-info.json` 的 `commit` 与推送的提交 SHA，并核对 Pages 的触发类型为 `github:push`。
 版本信息不显示在页面中。
