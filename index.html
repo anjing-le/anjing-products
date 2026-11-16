@@ -202,10 +202,10 @@ body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("
   box-shadow:inset 1px 1px 1px #ffffffe0,inset -1px -2px 1px #34444155,inset 0 0 0 2px #ffffff36;
 }
 .unit:not(.person) .front .art,.product-print .back-art {
-  position:absolute;inset:11% 5% auto;width:90%;height:68%;
-  object-fit:contain;mask-image:none;border-radius:calc(var(--w)*.048);
+  position:absolute;inset:11% 0 auto;width:100%;height:67%;
+  object-fit:cover;mask-image:none;border-radius:0;
 }
-.unit.mac .front .art,.mac .product-print .back-art {object-fit:cover;object-position:center 36%}
+.unit.mac .front .art,.mac .product-print .back-art {object-position:center 36%}
 .unit:not(.person) .front .name {
   inset:auto 0 3.8%;padding:0;text-align:center;line-height:1.15;
   font-size:calc(var(--w)*.123);letter-spacing:-.045em;font-weight:650;
