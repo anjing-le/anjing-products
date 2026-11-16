@@ -111,7 +111,7 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 .joint {filter:drop-shadow(3px 9px 6px #42515133)}
 .art {inset:0;width:100%;height:100%;object-fit:fill}
 .badge .name {background:linear-gradient(0deg,var(--stock) 40%,transparent);bottom:0;left:0;right:0;padding:9% 9% 4%;text-align:left}
-.badge img {z-index:-1}
+.badge img {z-index:0}
 .badge {isolation:isolate}
 .face {overflow:hidden}
 .face::before,.face::after {display:none}
@@ -253,6 +253,7 @@ body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("
 @media(max-width:600px){.product-hand.english-hand{--card-width:64vw;width:96vw;bottom:8svh;justify-content:flex-start;overflow-x:auto;padding:6svh 2vw 2svh;pointer-events:auto}.english-hand .feature{flex:0 0 var(--card-width)}.english-hand .feature + .feature{margin-left:3vw}}
 </style>
 <link rel="stylesheet" href="assets/product-cards.css">
+<link rel="stylesheet" href="assets/mobile.css">
 </head><body>
 <main class="stage" aria-label="产品">
   <canvas class="water" aria-hidden="true"></canvas>
@@ -528,6 +529,7 @@ function handRenderer(hand) {
   }
   let held=null;
   hand.onpointerdown=event=>{
+    if(event.pointerType==='touch') return;
     const button=event.target.closest('.feature');
     if(!button || held || !event.isPrimary || event.button!==0) return;
     const translation=getComputedStyle(button).translate;
@@ -627,7 +629,8 @@ function handRenderer(hand) {
       picture.draggable=false;
       picture.src='assets/'+['macos-x/','englishx/','cs-tool-x/'][selection]+[macosArtwork,englishArtwork,csArtwork][selection][i][0]+'.webp';
       picture.alt=[macosArtwork,englishArtwork,csArtwork][selection][i][1];
-      picture.loading='lazy';
+      picture.loading='eager';
+      picture.decoding='async';
         face.append(picture);
       }
       button.append(face);

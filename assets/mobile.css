@@ -1,0 +1,43 @@
+/* Touch screens use direct image painting and native horizontal card browsing. */
+@media(max-width:600px) {
+  .stage {padding-right:0;--w:min(30.5vw,180px);--strap:18px;gap:2.2vw}
+  .unit.person {right:3vw;--w:min(13vw,56px)}
+  .stage .hand.product-hand,.stage.both-open .hand.product-hand {
+    --card-width:86vw;left:0;bottom:max(16px,env(safe-area-inset-bottom));width:100%;
+    display:flex;grid-template-columns:none;transform:none;justify-content:flex-start;gap:12px;overflow-x:auto;overflow-y:hidden;
+    padding:24px 7vw;pointer-events:auto;scroll-snap-type:x mandatory;scroll-padding-inline:7vw;
+    -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;touch-action:pan-x pinch-zoom;
+  }
+  .stage .hand.product-hand[hidden] {display:none}
+  .stage .product-hand .feature {
+    flex:0 0 var(--card-width);width:var(--card-width);aspect-ratio:2;margin:0;
+    scroll-snap-align:center;touch-action:pan-x pinch-zoom;
+  }
+  .stage .product-hand .feature + .feature {margin-left:0}
+  .stage .product-hand .feature .face,.stage .product-hand .feature.show .face {transform:none;transition:none}
+  .stage .product-hand .feature .face .scene {
+    display:block;width:100%;height:100%;object-fit:contain;padding:3%;
+    filter:none;mix-blend-mode:normal;mask:none;-webkit-mask:none;
+  }
+  .stage .product-hand .face::after {display:none}
+  .stage .product-hand.reveal .feature {animation:none}
+  .art-viewer {width:96vw;max-height:90vh;max-height:90svh;margin:auto;overflow:auto}
+  .viewer-bar {position:sticky;top:0;background:#f8f6f0;z-index:1}
+  .viewer-image {width:100%;height:auto;min-height:1px;object-fit:contain}
+}
+@media(pointer:coarse) {
+  .stage .product-hand .feature {touch-action:pan-x pinch-zoom}
+  .stage .product-hand .feature .face .scene {filter:none;mix-blend-mode:normal;mask:none;-webkit-mask:none}
+}
+/* Avoid masked 3D image layers on mobile WebKit; switching faces stays explicit. */
+@media(max-width:600px),(pointer:coarse) {
+  .unit:not(.person) .badge-turn {transform:none;transform-style:flat}
+  .unit:not(.person) .badge-turn .badge {
+    transform:none;backface-visibility:visible;-webkit-backface-visibility:visible;
+    mask:none;-webkit-mask:none;
+  }
+  .unit:not(.person) .badge.front {display:block}
+  .unit:not(.person) .badge.reverse {display:none}
+  .unit:not(.person).turned .badge.front {display:none}
+  .unit:not(.person).turned .badge.reverse {display:block}
+}
