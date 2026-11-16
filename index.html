@@ -121,7 +121,13 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 
 .mount {perspective:calc(var(--w) * 4.5)}
 .badge-turn {position:relative;width:100%;aspect-ratio:.78;transform-style:preserve-3d;transition:transform .68s cubic-bezier(.32,.02,.18,1)}
-.turned .badge-turn {transform:rotateY(180deg)}
+/* One animated angle keeps the upper ring, both clasp arms and card in phase. */
+@property --hardware-turn {syntax:"<angle>";inherits:true;initial-value:0deg}
+.joint {--hardware-turn:0deg;transition:--hardware-turn .68s cubic-bezier(.32,.02,.18,1)}
+.turned .joint {--hardware-turn:180deg}
+.ring,.mount::before,.mount::after,.badge-turn {transform:rotateY(var(--hardware-turn))}
+.badge-turn {transition:none}
+@media(prefers-reduced-motion:reduce){.joint{transition:none}}
 .badge-turn .badge {position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;margin:0}
 .front {transform:rotateY(0deg)}
 .reverse {transform:rotateY(180deg)}
