@@ -189,13 +189,24 @@ body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("
 .viewer-bar button:hover {background:#e9e5db}
 .viewer-image {display:block;width:100%;height:auto}
 @media(max-width:600px){.product-hand.macos-hand{--card-width:62vw;bottom:13svh}.macos-hand .feature + .feature{margin-left:calc(var(--card-width)*-.925)}.art-viewer{width:96vw;border-radius:10px}.viewer-bar{padding:6px 12px}}
+/* cs-tool-x: reuse README art without stretching or cropping its labels. */
+.cs {--stock:#d8ddbe}
+.cs .art {inset:5% 0 auto;width:100%;height:80%;object-fit:contain;mask-image:linear-gradient(transparent,#000 5% 95%,transparent)}
+.cs .badge.front .name {padding-bottom:7%}
+.cs .back-art {height:68%;object-fit:contain}
+.product-hand.cs-hand {--card-width:min(24vw,35svh)}
+.cs-hand .feature {aspect-ratio:2}
+.cs-hand .feature + .feature {margin-left:calc(var(--card-width)*-.12)}
+.cs-hand .face {background:#f8f6f0;border-radius:4.5%;box-shadow:inset 1px 1px 1px #fff9,1px 2px 1px #645d4b45,3px 8px 15px #50493927}
+.cs-hand .scene {object-fit:contain}
+@media(max-width:600px){.product-hand.cs-hand{--card-width:64vw;width:96vw;bottom:8svh;justify-content:flex-start;overflow-x:auto;padding:6svh 2vw 2svh;pointer-events:auto}.cs-hand .feature{flex:0 0 var(--card-width)}.cs-hand .feature + .feature{margin-left:3vw}}
 </style>
 </head><body>
 <main class="stage" aria-label="产品">
   <canvas class="water" aria-hidden="true"></canvas>
   <div class="unit mac"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">macos-x</span><img class="art" src="assets/macos-x/badge-front-v1.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/macos-x/badge-front-v1.webp" alt="" draggable="false"><span class="reverse-name">macos-x</span></div></div></div><button class="badge-toggle" aria-label="macos-x" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
   <div class="unit english"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">EnglishX</span><img class="art" src="assets/english.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/english.webp" alt="" draggable="false"><span class="reverse-name">EnglishX</span></div></div></div><button class="badge-toggle" aria-label="EnglishX" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
-  <div class="unit cs"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">cs-tool-x</span><img class="art" src="assets/cs.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/cs.webp" alt="" draggable="false"><span class="reverse-name">cs-tool-x</span></div></div></div><button class="badge-toggle" aria-label="cs-tool-x" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
+  <div class="unit cs"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">cs-tool-x</span><img class="art" src="assets/cs-tool-x/00-brand.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/cs-tool-x/00-brand.webp" alt="" draggable="false"><span class="reverse-name">cs-tool-x</span></div></div></div><button class="badge-toggle" aria-label="cs-tool-x" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
   <div class="unit person"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><img class="portrait" src="assets/personal-front.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print personal-print"><span class="seal"></span></div></div></div><button class="badge-toggle" aria-label="安静的个人名片" aria-expanded="false"></button></div></div></div></div>
   <section class="hand product-hand" aria-label="功能牌" hidden></section>
   <section class="hand personal-hand" aria-label="个人介绍" hidden></section>
@@ -351,12 +362,18 @@ const macosArtwork=[
   ['nearby-transfer-v1','附近互传：两台 Mac 在同一网络内连接，拖入文件或用 Command V 发送文件、文字和图片'],
   ['file-actions-v1','文件操作：选中文件唤出菜单，图片转换、压缩和缩尺寸，文档转 Markdown 或 TXT，PDF 按页导出图片']
 ];
+const csArtwork=[
+  ['02-shell','Shell：服务器分组、终端分屏与右侧 SFTP 控制台，操作示意'],
+  ['03-data','数据：MySQL、PostgreSQL、Redis 与 ES；SQL 只读，表中为示例数据'],
+  ['04-git','Git：只读浏览本地仓库的分支、提交历史与文件变化'],
+  ['05-cli','CLI / Agent：doctor、schema 与 JSON 输出示意，无需窗口或常驻服务']
+];
 const artworkViewer=document.querySelector('.art-viewer');
-function viewMacosArtwork(index) {
-  const [file,description]=macosArtwork[index];
-  artworkViewer.querySelector('h2').textContent=features[0][index][0];
+function viewArtwork(selection,index) {
+  const [file,description]=(selection===0?macosArtwork:csArtwork)[index];
+  artworkViewer.querySelector('h2').textContent=features[selection][index][0];
   const image=artworkViewer.querySelector('img');
-  image.src='assets/macos-x/'+file+'.webp';
+  image.src='assets/'+(selection===0?'macos-x/':'cs-tool-x/')+file+'.webp';
   image.alt=description;
   artworkViewer.showModal();
 }
@@ -378,10 +395,10 @@ const features = [
     ['逐词学习','#7c7491','#e2ddec'],
     ['跟读','#758865','#dce6cf']
   ],[
-    ['终端','#546c59','#d8e3cb'],
-    ['文件传输','#948058','#eee0c8'],
-    ['数据表','#617a83','#d6e5e5'],
-    ['终端分屏','#82738d','#e6dfea']
+    ['Shell','#546c59','#d8e3cb'],
+    ['数据','#617a83','#d6e5e5'],
+    ['Git','#948058','#eee0c8'],
+    ['CLI / Agent','#82738d','#e6dfea']
   ],[
     ['关于我','#776b5e','#e1cfbd'],
     ['作品','#526771','#d3e1dd'],
@@ -462,6 +479,7 @@ function handRenderer(hand) {
     hand.replaceChildren();
     hand.hidden=false;
     hand.classList.toggle('macos-hand',selection===0);
+    hand.classList.toggle('cs-hand',selection===2);
     const pack=features[selection];
     hand.setAttribute('aria-label',cards[selection].button.getAttribute('aria-label')+' 功能牌');
     pack.forEach(([label,color,tint],i)=>{
@@ -487,15 +505,15 @@ function handRenderer(hand) {
       picture.className='scene';
       picture.alt='';
       picture.draggable=false;
-      picture.src=selection===0?'assets/macos-x/'+macosArtwork[i][0]+'.webp':'assets/'+productAssets[selection]+'-'+(i+1)+'.webp';
-      picture.alt=selection===0?macosArtwork[i][1]:'';
+      picture.src=selection===0?'assets/macos-x/'+macosArtwork[i][0]+'.webp':selection===2?'assets/cs-tool-x/'+csArtwork[i][0]+'.webp':'assets/'+productAssets[selection]+'-'+(i+1)+'.webp';
+      picture.alt=selection===0?macosArtwork[i][1]:selection===2?csArtwork[i][1]:'';
       picture.loading='lazy';
         face.append(picture);
       }
       button.append(face);
       button.onfocus=()=>highlight(button);
       button.onblur=()=>highlight(null);
-      button.onclick=()=>{highlight(button);if(selection===0)viewMacosArtwork(i)};
+      button.onclick=()=>{highlight(button);if(selection===0||selection===2)viewArtwork(selection,i)};
       hand.append(button);
     });
     hand.classList.add('reveal');
