@@ -71,12 +71,9 @@
   .stage {--w:min(24vw,26svh,324px)}
 }
 
-/* The empty glyphs expose the water through the same acrylic strip on both sides. */
-.unit:not(.person) .badge.front,.unit .product-print {
-  background:linear-gradient(130deg,#fff5,transparent 60%),linear-gradient(color-mix(in srgb,var(--stock) 24%,transparent) 0 78%,transparent 78%);
-  background-size:100% 11%,100% 100%;background-repeat:no-repeat;
-}
-.engraving {position:absolute;inset:78% 0 0;width:100%;height:22%;pointer-events:none}
+.unit:not(.person) .badge .name {padding:0}
+.unit:not(.person) .badge.reverse {border:1px solid transparent}
+.unit:not(.person) .badge.reverse > .name {transform:scaleX(-1)}
 .product-print .platforms {
   inset:23% 16% 34%;
   display:grid;grid-template-rows:1fr 1fr;gap:calc(var(--w)*.055);
