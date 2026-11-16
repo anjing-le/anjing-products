@@ -1,0 +1,6 @@
+Tool: built-in image_gen
+Reference: assets/english-4.webp (approved white-paper material)
+Original: docs/artwork/shared/card-paper-v1.png
+Website texture: assets/card-paper-v1.webp
+
+Use case: precise-object-edit. Asset type: shared full-bleed paper material for physical website cards. Input image is the approved EnglishX feature card; preserve ONLY its exact soft warm-white heavy paper material, fine irregular fibers, tactile shallow paper grain and gentle diffuse upper-left illumination. Remove the microphone, waveforms, every colored paper-cut object and all their shadows. Reconstruct the same uninterrupted blank white paper across the whole canvas. This output is a material texture, NOT a card mockup or a scene: square high-resolution canvas completely filled edge-to-edge with the paper, no card outline, no border, no corner, no writing, no illustration, no objects, no cast shadow, no vignette, no frame. Fine natural tooth visible at close inspection, subtle cotton fibers and very shallow relief, no strong wrinkles, stains, yellowing, rough brown kraft fibers, glitter or repeating motifs. Color remains quiet warm white, approximately #f8f6f0; lighting even enough to put other printed artwork over it. Keep the reference's real handmade white-paper feel.
