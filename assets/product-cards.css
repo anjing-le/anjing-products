@@ -71,11 +71,16 @@
   .stage {--w:min(24vw,26svh,324px)}
 }
 
-/* Download controls share the printed insert and turn as part of its face. */
-.unit .badge.reverse .product-print img.back-art {
-  z-index:0;
-  height:52%;
-  object-fit:contain;
+/* The empty glyphs expose the water through the same acrylic strip on both sides. */
+.unit:not(.person) .badge.front,.unit .product-print {
+  background:linear-gradient(130deg,#fff5,transparent 60%),linear-gradient(color-mix(in srgb,var(--stock) 24%,transparent) 0 78%,transparent 78%);
+  background-size:100% 11%,100% 100%;background-repeat:no-repeat;
 }
-.product-print .platforms button {background:#ffffff36}
+.engraving {position:absolute;inset:78% 0 0;width:100%;height:22%;pointer-events:none}
+.product-print .platforms {
+  inset:23% 16% 34%;
+  display:grid;grid-template-rows:1fr 1fr;gap:calc(var(--w)*.055);
+  justify-content:stretch;
+}
+.product-print .platforms button {width:100%;background:#ffffff36}
 .product-print .platforms button:is(:hover,:focus-visible) {background:#ffffffa8}

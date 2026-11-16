@@ -29,15 +29,13 @@
   .stage .product-hand .feature {touch-action:pan-x pinch-zoom}
   .stage .product-hand .feature .face .scene {filter:none;mix-blend-mode:normal;mask:none;-webkit-mask:none}
 }
-/* Avoid masked 3D image layers on mobile WebKit; switching faces stays explicit. */
+/* Project each face around the same hinge without masked 3D image layers. */
 @media(max-width:600px),(pointer:coarse) {
   .unit:not(.person) .badge-turn {transform:none;transform-style:flat}
   .unit:not(.person) .badge-turn .badge {
-    transform:none;backface-visibility:visible;-webkit-backface-visibility:visible;
+    backface-visibility:visible;-webkit-backface-visibility:visible;
     mask:none;-webkit-mask:none;
   }
-  .unit:not(.person) .badge.front {display:block}
-  .unit:not(.person) .badge.reverse {display:none}
-  .unit:not(.person).turned .badge.front {display:none}
-  .unit:not(.person).turned .badge.reverse {display:block}
+  .unit:not(.person) .badge.front {transform:scaleX(max(0,cos(var(--hardware-turn))))}
+  .unit:not(.person) .badge.reverse {transform:scaleX(max(0,calc(-1 * cos(var(--hardware-turn)))))}
 }
