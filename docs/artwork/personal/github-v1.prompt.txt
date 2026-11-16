@@ -1,0 +1,9 @@
+Tool: built-in image_gen
+Original: docs/artwork/personal/github-v1.png
+Web asset: assets/personal/github-v1.webp
+
+Use case: illustration-story. Asset type: GitHub personal-profile link card on an existing tactile white-paper website. Generate a new wide landscape illustration, exactly 2:1.
+Reference 1 is the REAL current anjing-le GitHub profile README hero. Preserve its distinctive world-building concept and the recognizable yellow-haired boy in a black hoodie drawing with a giant yellow pencil; this is the same Anjing character, not a new identity. Reference 2 is the website's approved warm-white paper material.
+Compose an elegant simpler adaptation readable at card size: Anjing at the left third drawing a graphite sketched landscape that becomes a vivid blue river and small green islands across the middle/right. Include a paper crane boat, a little suspended wooden bridge, a few tiny explorers and an open doorway on a distant island, all derived from the reference. Fine dark graphite/crayon outlines, visible yellow, turquoise-blue, grass-green pencil hatching, small coral accents, playful handmade imagination. Keep around 25% calm warm-white paper and simplified distinct silhouettes rather than reproducing every detail of the wide original.
+The drawing should feel made directly on the same textured white card, with subtle raised colored-pencil/paper-cut tactile highlights but no separate rectangular image pasted onto a white sheet. No exterior card boundary, no frame, no tilted mockup, no desk, no photo, no UI screenshot, no extra brand/logo.
+No text, words or letters anywhere; the actual GitHub label will be HTML placed in the bottom-left 14% strip, so leave that strip mostly quiet white paper. Full-bleed continuous warm-white paper, subtle fibers. Preserve the character's yellow hair and black hoodie, no style switch to glossy 3D.

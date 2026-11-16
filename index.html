@@ -248,6 +248,32 @@ body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("
 .english-hand .face {background:#f8f6f0;border-radius:4.5%;box-shadow:inset 1px 1px 1px #fff9,1px 2px 1px #645d4b45,3px 8px 15px #50493927}
 .english-hand .face .scene {width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
 @media(max-width:600px){.product-hand.english-hand{--card-width:64vw;width:96vw;bottom:8svh;justify-content:flex-start;overflow-x:auto;padding:6svh 2vw 2svh;pointer-events:auto}.english-hand .feature{flex:0 0 var(--card-width)}.english-hand .feature + .feature{margin-left:3vw}}
+/* Personal wood badge: illustration directly on the board, plain reverse. */
+.person .badge-turn .badge {
+  border-radius:12%;border:1px solid #a88b6066;
+  background:#f2d8b2;
+  box-shadow:inset 1px 1px 1px #fff9,inset -1px -1px 1px #8b6b3d55,1px 2px 0 #b8996c,3px 6px 10px #4b3f2b22;
+}
+.person .portrait {inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.person .personal-print {
+  border:0;background:#f2d8b2 url("assets/personal/wood-back-v1.webp") center / cover no-repeat;
+}
+.personal-hand {--card-width:min(42vw,50svh,520px)}
+.personal-hand .feature {aspect-ratio:2;text-decoration:none;color:inherit}
+.personal-hand .feature + .feature {margin-left:calc(var(--card-width)*-.08)}
+.personal-hand .profile-face .scene {
+  width:100%;height:100%;object-fit:contain;border-radius:inherit;
+  mix-blend-mode:multiply;filter:brightness(1.025);
+}
+.personal-hand .profile-face .personal-card-label {
+  position:absolute;left:6%;bottom:5%;font:600 clamp(12px,1.8vw,22px)/1.2 system-ui,sans-serif;
+  letter-spacing:-.025em;color:#3b3a34;pointer-events:none;
+}
+@media(max-width:600px){
+  .personal-hand {--card-width:82vw;flex-direction:column;gap:14px;bottom:4svh}
+  .personal-hand .feature + .feature {margin-left:0}
+  .personal-hand .profile-face .personal-card-label {font-size:15px}
+}
 </style>
 <link rel="stylesheet" href="assets/product-cards.css">
 <link rel="stylesheet" href="assets/mobile.css">
@@ -257,7 +283,7 @@ body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("
   <div class="unit mac"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><button class="badge-toggle" aria-label="macos-x" aria-expanded="false"></button><div class="badge-turn"><div class="badge front"><img class="art" src="assets/macos-x/badge-front-v1.webp" alt="" draggable="false"></div><div class="badge reverse"><div class="print product-print"><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div><span class="name" aria-hidden="true">macos-x</span></div></div></div></div></div>
   <div class="unit english"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><button class="badge-toggle" aria-label="EnglishX" aria-expanded="false"></button><div class="badge-turn"><div class="badge front"><img class="art" src="assets/englishx/00-brand.webp" alt="" draggable="false"></div><div class="badge reverse"><div class="print product-print"><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div><span class="name" aria-hidden="true">EnglishX</span></div></div></div></div></div>
   <div class="unit cs"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><button class="badge-toggle" aria-label="cs-tool-x" aria-expanded="false"></button><div class="badge-turn"><div class="badge front"><img class="art" src="assets/cs-tool-x/00-brand.webp" alt="" draggable="false"></div><div class="badge reverse"><div class="print product-print"><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div><span class="name" aria-hidden="true">cs-tool-x</span></div></div></div></div></div>
-  <div class="unit person"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><img class="portrait" src="assets/personal-front.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print personal-print"><span class="seal"></span></div></div></div><button class="badge-toggle" aria-label="安静的个人名片" aria-expanded="false"></button></div></div></div></div>
+  <div class="unit person"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><img class="portrait" src="assets/personal/wood-front-v1.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print personal-print"></div></div></div><button class="badge-toggle" aria-label="安静的个人名片" aria-expanded="false"></button></div></div></div></div>
   <section class="hand product-hand" aria-label="功能牌" hidden></section>
   <section class="hand personal-hand" aria-label="个人介绍" hidden></section>
 </main>
@@ -475,6 +501,10 @@ function setOpen(card, open) {
 function activate(card) {
   setOpen(card,card.button.getAttribute('aria-expanded')!=='true');
 }
+const personalLinks=[
+  {href:'https://github.com/anjing-le',file:'github-v1',label:'GitHub',alt:'安静用铅笔画出蓝色河流、绿色岛屿与探索世界，前往 GitHub'},
+  {href:'https://anjing.cc/',file:'home-v1',label:'anjing.cc',alt:'暖白纸面上的黄发黑卫衣安静，前往个人主页'}
+];
 const productAssets=['mac','english','cs'];
 const macosArtwork=[
   ['capture','截图与编辑：框选、标注、提取文字与复制'],
@@ -530,9 +560,8 @@ const features = [
     ['Git','#948058','#eee0c8'],
     ['CLI / Agent','#82738d','#e6dfea']
   ],[
-    ['关于我','#776b5e','#e1cfbd'],
-    ['作品','#526771','#d3e1dd'],
-    ['近况','#766549','#e4d9bb']
+    ['GitHub','#526771','#d3e1dd'],
+    ['个人主页','#776b5e','#e1cfbd']
   ]
 ];
 function handRenderer(hand) {
@@ -616,7 +645,8 @@ function handRenderer(hand) {
     hand.style.setProperty('--gaps',pack.length-1);
     hand.setAttribute('aria-label',cards[selection].button.getAttribute('aria-label')+' 功能牌');
     pack.forEach(([label,color,tint],i)=>{
-      const button=document.createElement('button');
+      const button=document.createElement(selection===3?'a':'button');
+      if(selection===3){button.href=personalLinks[i].href;button.target='_blank';button.rel='noopener noreferrer';button.draggable=false;}
       button.className='feature';
       button.setAttribute('aria-label',label);
       const offset=i-(pack.length-1)/2;
@@ -631,9 +661,15 @@ function handRenderer(hand) {
       face.className='face';
       if(selection===3) {
         face.classList.add('profile-face');
+        const picture=document.createElement('img');
+        picture.className='scene';
+        picture.src='assets/personal/'+personalLinks[i].file+'.webp';
+        picture.alt=personalLinks[i].alt;
+        picture.draggable=false;
         const topic=document.createElement('span');
-        topic.textContent=label;
-        face.append(topic);
+        topic.className='personal-card-label';
+        topic.textContent=personalLinks[i].label;
+        face.append(picture,topic);
       } else {
         const picture=document.createElement('img');
       picture.className='scene';
