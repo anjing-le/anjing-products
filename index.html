@@ -146,6 +146,14 @@ body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("
 .badge-toggle,.feature,.platforms button {cursor:url("assets/cursor-open-1.png") 11 12,pointer;cursor:image-set(url("assets/cursor-open-1.png") 1x,url("assets/cursor-open-2.png") 2x) 11 12,pointer}
 .badge-toggle:active {cursor:url("assets/cursor-closed-1.png") 11 12,grabbing;cursor:image-set(url("assets/cursor-closed-1.png") 1x,url("assets/cursor-closed-2.png") 2x) 11 12,grabbing}
 }
+/* Keep both open hands reachable if a product is reopened from the personal view. */
+.stage.both-open .product-hand {left:34%;--card-width:min(27vw,50svh)}
+.stage.both-open .personal-hand {left:83%;--card-width:min(14vw,25svh)}
+@media(max-width:600px){
+  .stage.both-open .product-hand {left:50%;bottom:6svh;--card-width:54vw}
+  .stage.both-open .personal-hand {left:78%;bottom:49svh;--card-width:21vw}
+  .stage.both-open .personal-hand .profile-face span {font-size:14px}
+}
 </style>
 </head><body>
 <main class="stage" aria-label="产品">
@@ -154,7 +162,8 @@ body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("
   <div class="unit english"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">EnglishX</span><img class="art" src="assets/english.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/english.webp" alt="" draggable="false"><span class="reverse-name">EnglishX</span></div></div></div><button class="badge-toggle" aria-label="EnglishX" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
   <div class="unit cs"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="name">cs-tool-x</span><img class="art" src="assets/cs.webp" alt="" draggable="false"></div><div class="badge reverse" aria-hidden="true"><div class="print product-print"><img class="back-art" src="assets/cs.webp" alt="" draggable="false"><span class="reverse-name">cs-tool-x</span></div></div></div><button class="badge-toggle" aria-label="cs-tool-x" aria-expanded="false"></button><div class="platforms" inert><button type="button" aria-disabled="true" aria-label="macOS 下载">macOS ↓</button><button type="button" aria-disabled="true" aria-label="Windows 下载">Windows ↓</button></div></div></div></div></div>
   <div class="unit person"><div class="rig"><div class="strap"></div><div class="joint"><div class="ring"></div><div class="mount"><div class="badge-turn"><div class="badge front"><span class="seal" aria-hidden="true"></span><span class="name">安静</span></div><div class="badge reverse" aria-hidden="true"><div class="print personal-print"><span class="reverse-name">安静</span></div></div></div><button class="badge-toggle" aria-label="安静的个人名片" aria-expanded="false"></button></div></div></div></div>
-  <section class="hand" aria-label="功能牌" hidden></section>
+  <section class="hand product-hand" aria-label="功能牌" hidden></section>
+  <section class="hand personal-hand" aria-label="个人介绍" hidden></section>
 </main>
 <script>
 const stage = document.querySelector('.stage');
@@ -163,7 +172,8 @@ const cards = [...document.querySelectorAll('.unit')].map((unit,index) => ({
   unit, index, rig:unit.querySelector('.rig'), joint:unit.querySelector('.joint'), button:unit.querySelector('.badge-toggle'),
   length:0, velocity:0, angle:0, spin:0, target:0, restAngle:[-2,1.6,-1.1,1.3][index]
 }));
-let selection = null, frame = 0, lastTime = 0, drag = null;
+let product = null, personalOpen = false;
+let frame = 0, lastTime = 0, drag = null;
 function positions(card) {
   const height = stage.clientHeight;
   const hardware = card.joint.offsetHeight;
@@ -199,8 +209,10 @@ function wake() { if(!frame) {lastTime=performance.now();frame=requestAnimationF
 function layout(initial=false) {
   for (const c of cards) {
     const {high,low,tucked}=positions(c);
-    const down=selection===c.index;
-    const target=down?low:selection===null?high:tucked;
+    const personal=c.unit.classList.contains('person');
+    const down=personal?personalOpen:product===c.index;
+    const tuckedAway=!personal && !down && (personalOpen || product!==null);
+    const target=down?low:tuckedAway?tucked:high;
     if (!initial && Math.abs(c.target-target)>1) c.spin += [17,-20,15,-13][c.index];
     c.target=target;
     c.button.setAttribute('aria-expanded',String(down));
@@ -211,10 +223,23 @@ function layout(initial=false) {
   }
   wake();
 }
-function activate(c) {
-  selection=selection===c.index?null:c.index;
-  renderHand();
+function setOpen(card, open) {
+  if(card.unit.classList.contains('person')) {
+    personalOpen=open;
+    if(open && product!==null) {
+      product=null;
+      showProductHand(null);
+    }
+    showPersonalHand(open?card.index:null);
+  } else {
+    product=open?card.index:null;
+    showProductHand(product);
+  }
+  stage.classList.toggle('both-open',personalOpen && product!==null);
   layout();
+}
+function activate(card) {
+  setOpen(card,card.button.getAttribute('aria-expanded')!=='true');
 }
 const productAssets=['mac','english','cs'];
 const features = [
@@ -239,64 +264,67 @@ const features = [
     ['近况','#766549','#e4d9bb']
   ]
 ];
-const hand=document.querySelector('.hand');
-function highlight(button) {
-  for(const card of hand.children) card.classList.toggle('show',card===button);
-}
-hand.onpointerleave=()=>highlight(hand.contains(document.activeElement) && document.activeElement.matches(':focus-visible') ? document.activeElement : null);
-let closeTimer;
-function renderHand() {
-  clearTimeout(closeTimer);
-  if(selection===null) {
-    hand.inert=true;
-    highlight(null);
-    hand.classList.add('closing');
-    const finish=()=>{hand.hidden=true;hand.replaceChildren()};
-    if(reduced.matches) finish();
-    else closeTimer=setTimeout(finish,280);
-    return;
+function handRenderer(hand) {
+  function highlight(button) {
+    for(const card of hand.children) card.classList.toggle('show',card===button);
   }
-  hand.inert=false;
-  hand.classList.remove('closing');
-  hand.replaceChildren();
-  hand.hidden=false;
-  const pack=features[selection];
-  hand.setAttribute('aria-label',cards[selection].button.getAttribute('aria-label')+' 功能牌');
-  pack.forEach(([label,color,tint],i)=>{
-    const button=document.createElement('button');
-    button.className='feature';
-    button.setAttribute('aria-label',label);
-    const offset=i-(pack.length-1)/2;
-    button.style.setProperty('--gather-x',(-offset*35)+'%');
-    button.style.setProperty('--tilt',offset*3+'deg');
-    button.style.setProperty('--dip',Math.abs(offset)*.9+'svh');
-    button.style.setProperty('--delay',i*30+'ms');
-    button.style.setProperty('--color',color);
-    button.style.setProperty('--tint',tint);
-    const face=document.createElement('span');
-    face.className='face';
-    if(selection===3) {
-      face.classList.add('profile-face');
-      const topic=document.createElement('span');
-      topic.textContent=label;
-      face.append(topic);
-    } else {
-      const picture=document.createElement('img');
-    picture.className='scene';
-    picture.alt='';
-    picture.draggable=false;
-    picture.src='assets/'+productAssets[selection]+'-'+(i+1)+'.webp';
-      face.append(picture);
+  hand.onpointerleave=()=>highlight(hand.contains(document.activeElement) && document.activeElement.matches(':focus-visible') ? document.activeElement : null);
+  let closeTimer;
+  return function renderHand(selection) {
+    clearTimeout(closeTimer);
+    if(selection===null) {
+      hand.inert=true;
+      highlight(null);
+      hand.classList.add('closing');
+      const finish=()=>{hand.hidden=true;hand.replaceChildren()};
+      if(reduced.matches) finish();
+      else closeTimer=setTimeout(finish,280);
+      return;
     }
-    button.append(face);
-    button.onpointerenter=e=>{if(e.pointerType!=='touch')highlight(button)};
-    button.onfocus=()=>highlight(button);
-    button.onblur=()=>highlight(null);
-    button.onclick=()=>highlight(button);
-    hand.append(button);
-  });
-  hand.classList.add('reveal');
+    hand.inert=false;
+    hand.classList.remove('closing');
+    hand.replaceChildren();
+    hand.hidden=false;
+    const pack=features[selection];
+    hand.setAttribute('aria-label',cards[selection].button.getAttribute('aria-label')+' 功能牌');
+    pack.forEach(([label,color,tint],i)=>{
+      const button=document.createElement('button');
+      button.className='feature';
+      button.setAttribute('aria-label',label);
+      const offset=i-(pack.length-1)/2;
+      button.style.setProperty('--gather-x',(-offset*35)+'%');
+      button.style.setProperty('--tilt',offset*3+'deg');
+      button.style.setProperty('--dip',Math.abs(offset)*.9+'svh');
+      button.style.setProperty('--delay',i*30+'ms');
+      button.style.setProperty('--color',color);
+      button.style.setProperty('--tint',tint);
+      const face=document.createElement('span');
+      face.className='face';
+      if(selection===3) {
+        face.classList.add('profile-face');
+        const topic=document.createElement('span');
+        topic.textContent=label;
+        face.append(topic);
+      } else {
+        const picture=document.createElement('img');
+      picture.className='scene';
+      picture.alt='';
+      picture.draggable=false;
+      picture.src='assets/'+productAssets[selection]+'-'+(i+1)+'.webp';
+        face.append(picture);
+      }
+      button.append(face);
+      button.onpointerenter=e=>{if(e.pointerType!=='touch')highlight(button)};
+      button.onfocus=()=>highlight(button);
+      button.onblur=()=>highlight(null);
+      button.onclick=()=>highlight(button);
+      hand.append(button);
+    });
+    hand.classList.add('reveal');
+  };
 }
+const showProductHand=handRenderer(document.querySelector(".product-hand"));
+const showPersonalHand=handRenderer(document.querySelector(".personal-hand"));
 for(const c of cards) {
   c.button.onclick=()=>activate(c);
   c.button.onpointerdown=e=>{
@@ -320,7 +348,7 @@ for(const c of cards) {
     if(moved && e.type==='pointerup') {
       c.button.addEventListener('click',ev=>{ev.stopImmediatePropagation();ev.preventDefault()},{once:true,capture:true,signal:AbortSignal.timeout(450)});
       if(distance>18) activate(c);
-      else if(distance< -18 && selection!==null) {selection=null;renderHand();layout()}
+      else if(distance< -18 && c.button.getAttribute('aria-expanded')==='true') setOpen(c,false);
     }
     wake();
   }
