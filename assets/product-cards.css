@@ -97,3 +97,42 @@
 }
 .product-print .platforms button {touch-action:none;width:100%;font-size:clamp(10px,calc(var(--w)*.079),24px);background:#ffffff36}
 .product-print .platforms button:is(:hover,:focus-visible) {background:#ffffffa8}
+
+/* The title row stays reachable even when a drawn card covers its neighbours. */
+.fan-titles {
+  position:absolute;bottom:calc(100% + min(9svh,70px));left:50%;transform:translateX(-50%);
+  display:flex;width:max-content;max-width:94vw;justify-content:center;flex-wrap:wrap;
+  gap:2px 4px;pointer-events:auto;
+}
+.fan-titles button {
+  border:0;padding:6px clamp(5px,.9vw,16px);background:transparent;border-radius:9px;
+  color:#51534f;font:550 clamp(12px,1.1vw,16px)/1.45 system-ui;
+  cursor:url("cursors/richfree-pointer-20.png") 7 3,pointer;
+}
+.fan-titles button:is(.selected,:focus-visible) {
+  color:#282c29;background:#fffaf0d9;box-shadow:0 1px 3px #56594d26;
+}
+.fan-caption {display:none}
+@media(min-width:601px) {
+  .stage .hand.product-hand {
+    --card-width:min(39vw,53svh);--fan-width:min(76vw,calc(var(--card-width)*1.95));width:var(--fan-width);bottom:6.5svh;
+  }
+  .stage.both-open .hand.product-hand {--fan-width:54vw;--card-width:min(30vw,48svh)}
+  .stage.both-open .fan-titles {max-width:60vw}
+  .stage .product-hand .face {transform-origin:50% 100%}
+  .stage .product-hand .feature.show .face {
+    transform:translateY(-5.5svh) rotate(0deg) scale(1.035);
+  }
+  .product-hand.reveal .feature {animation-name:fan-deal}
+  @keyframes fan-deal {
+    from {opacity:0;transform:translateX(calc((var(--fan-width) - var(--card-width))*var(--fan-shift))) translateY(7svh) scale(.89)}
+  }
+  .product-hand.closing .fan-titles {visibility:hidden}
+}
+@media(max-width:600px) {
+  .fan-titles {display:none}
+  .product-hand .fan-caption {
+    display:block;position:absolute;top:4%;left:5%;font:600 14px/1.4 system-ui;color:#48463f;
+  }
+  .stage .hand.product-hand .feature .face .scene {padding:26px 3% 2%}
+}
