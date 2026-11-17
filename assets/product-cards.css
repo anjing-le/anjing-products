@@ -100,33 +100,42 @@
 
 /* Each index is printed on the exposed corner of its own sheet. */
 .product-hand .fan-caption {
-  position:absolute;top:4%;left:4%;z-index:1;color:#413e35;white-space:nowrap;
-  font:600 clamp(12px,1.05vw,16px)/1.4 system-ui;letter-spacing:.015em;
+  position:absolute;top:4%;left:4%;z-index:1;color:#66594b;white-space:nowrap;
+  font:500 clamp(12px,1.13vw,17px)/1.4 "Kaiti SC","STKaiti","KaiTi","Songti SC",Georgia,serif;
+  letter-spacing:.035em;text-shadow:0 .6px #fff9;
 }
 @media(min-width:601px) {
   .stage .hand.product-hand {
     --card-width:min(36vw,52svh);--fan-width:min(87vw,calc(var(--card-width) + var(--gaps)*125px));
-    width:var(--fan-width);display:flex;bottom:6svh;align-items:end;
+    width:var(--fan-width);display:grid;bottom:6svh;align-items:end;
   }
   .stage .hand.product-hand[hidden] {display:none}
   .stage.both-open .hand.product-hand {--fan-width:61vw;--card-width:min(25vw,46svh)}
   .stage .product-hand .feature {
-    flex:1 1 0;min-width:0;height:calc(var(--card-width)/1.56);width:auto;
-    z-index:var(--layer);transition:flex-basis .24s ease;
+    min-width:0;height:calc(var(--card-width)/1.56);width:var(--card-width);
+    z-index:auto;
   }
-  .stage .product-hand .feature.uncovered {flex:0 0 var(--card-width)}
   .stage .product-hand .face {
-    width:var(--card-width);inset:0 auto 0 0;transform-origin:50% 100%;
-    transform:translateY(var(--dip)) rotate(var(--tilt));
+    width:var(--card-width);inset:0;transform-origin:50% 100%;
+    transform:rotate(var(--tilt)) translateY(var(--dip));
+    transition:transform .34s cubic-bezier(.24,.66,.29,1),box-shadow .34s ease;
   }
-  .stage .product-hand .right-wing .face {inset:0 0 0 auto}
-  .stage .product-hand .right-wing .fan-caption {left:auto;right:4%}
   .stage .product-hand .feature.show .face {
-    transform:rotate(var(--tilt)) translateY(-5svh);
+    transform:rotate(var(--tilt)) translateY(calc(var(--dip) - 6svh));
   }
   .stage .product-hand .feature.sliding {z-index:20}
   .stage .product-hand .face .scene {padding:clamp(30px,4.5svh,48px) 3% 2%}
   .product-hand.reveal .feature {animation-name:fan-deal}
+  .product-hand.closing .feature {
+    animation:fan-fold calc(var(--motion-duration)*.78) cubic-bezier(.45,.05,.7,.85) both;
+    animation-delay:calc(var(--motion-duration)*.22*(1 - var(--order)));
+  }
+  @keyframes fan-fold {
+    to {opacity:0;transform:translateX(calc((var(--fan-width) - var(--card-width))*var(--fan-shift))) translateY(7svh) scale(.89)}
+  }
+  @media(prefers-reduced-motion:reduce) {
+    .stage .product-hand .feature,.stage .product-hand .face {animation:none;transition:none}
+  }
   @keyframes fan-deal {
     from {opacity:0;transform:translateX(calc((var(--fan-width) - var(--card-width))*var(--fan-shift))) translateY(7svh) scale(.89)}
   }

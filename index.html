@@ -278,7 +278,7 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
   .personal-hand .profile-face .personal-card-label {font-size:15px}
 }
 </style>
-<link rel="stylesheet" href="assets/product-cards.css?v=fan-2">
+<link rel="stylesheet" href="assets/product-cards.css?v=fan-3">
 <link rel="stylesheet" href="assets/mobile.css">
 </head><body>
 <main class="stage" aria-label="产品">
@@ -567,15 +567,7 @@ const features = [
 ];
 function handRenderer(hand) {
   function highlight(button) {
-    const cards=[...hand.children];
-    const active=button?cards.indexOf(button):cards.length-1;
-    cards.forEach((card,i)=>{
-      card.classList.toggle('show',card===button);
-      if(!hand.classList.contains('product-hand')) return;
-      card.classList.toggle('uncovered',i===active);
-      card.classList.toggle('right-wing',i>active);
-      card.style.setProperty('--layer',cards.length-Math.abs(active-i));
-    });
+    for(const card of hand.children) card.classList.toggle('show',card===button);
   }
   let held=null;
   hand.onpointerdown=event=>{
@@ -670,7 +662,8 @@ function handRenderer(hand) {
       button.style.setProperty('--fan-shift',-spread/2);
       button.style.setProperty('--tilt',spread*(selection===3?3:14)+'deg');
       button.style.setProperty('--dip',Math.abs(spread)*.9+'svh');
-      button.style.setProperty('--delay',(duration*.22*i/Math.max(1,pack.length-1))+'ms');
+      button.style.setProperty('--order',i/Math.max(1,pack.length-1));
+      button.style.setProperty('--delay','calc(var(--motion-duration) * .22 * var(--order))');
       button.style.setProperty('--color',color);
       button.style.setProperty('--tint',tint);
       const face=document.createElement('span');
