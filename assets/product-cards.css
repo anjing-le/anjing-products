@@ -98,41 +98,46 @@
 .product-print .platforms button {touch-action:none;width:100%;font-size:clamp(10px,calc(var(--w)*.079),24px);background:#ffffff36}
 .product-print .platforms button:is(:hover,:focus-visible) {background:#ffffffa8}
 
-/* The title row stays reachable even when a drawn card covers its neighbours. */
-.fan-titles {
-  position:absolute;bottom:calc(100% + min(9svh,70px));left:50%;transform:translateX(-50%);
-  display:flex;width:max-content;max-width:94vw;justify-content:center;flex-wrap:wrap;
-  gap:2px 4px;pointer-events:auto;
+/* Each index is printed on the exposed corner of its own sheet. */
+.product-hand .fan-caption {
+  position:absolute;top:4%;left:4%;z-index:1;color:#413e35;white-space:nowrap;
+  font:600 clamp(12px,1.05vw,16px)/1.4 system-ui;letter-spacing:.015em;
 }
-.fan-titles button {
-  border:0;padding:6px clamp(5px,.9vw,16px);background:transparent;border-radius:9px;
-  color:#51534f;font:550 clamp(12px,1.1vw,16px)/1.45 system-ui;
-  cursor:url("cursors/richfree-pointer-20.png") 7 3,pointer;
-}
-.fan-titles button:is(.selected,:focus-visible) {
-  color:#282c29;background:#fffaf0d9;box-shadow:0 1px 3px #56594d26;
-}
-.fan-caption {display:none}
 @media(min-width:601px) {
   .stage .hand.product-hand {
-    --card-width:min(39vw,53svh);--fan-width:min(76vw,calc(var(--card-width)*1.95));width:var(--fan-width);bottom:6.5svh;
+    --card-width:min(36vw,52svh);--fan-width:min(87vw,calc(var(--card-width) + var(--gaps)*125px));
+    width:var(--fan-width);display:flex;bottom:6svh;align-items:end;
   }
-  .stage.both-open .hand.product-hand {--fan-width:54vw;--card-width:min(30vw,48svh)}
-  .stage.both-open .fan-titles {max-width:60vw}
-  .stage .product-hand .face {transform-origin:50% 100%}
+  .stage .hand.product-hand[hidden] {display:none}
+  .stage.both-open .hand.product-hand {--fan-width:61vw;--card-width:min(25vw,46svh)}
+  .stage .product-hand .feature {
+    flex:1 1 0;min-width:0;height:calc(var(--card-width)/1.56);width:auto;
+    z-index:var(--layer);transition:flex-basis .24s ease;
+  }
+  .stage .product-hand .feature.uncovered {flex:0 0 var(--card-width)}
+  .stage .product-hand .face {
+    width:var(--card-width);inset:0 auto 0 0;transform-origin:50% 100%;
+    transform:translateY(var(--dip)) rotate(var(--tilt));
+  }
+  .stage .product-hand .right-wing .face {inset:0 0 0 auto}
+  .stage .product-hand .right-wing .fan-caption {left:auto;right:4%}
   .stage .product-hand .feature.show .face {
-    transform:translateY(-5.5svh) rotate(0deg) scale(1.035);
+    transform:rotate(var(--tilt)) translateY(-5svh);
   }
+  .stage .product-hand .feature.sliding {z-index:20}
+  .stage .product-hand .face .scene {padding:clamp(30px,4.5svh,48px) 3% 2%}
   .product-hand.reveal .feature {animation-name:fan-deal}
   @keyframes fan-deal {
     from {opacity:0;transform:translateX(calc((var(--fan-width) - var(--card-width))*var(--fan-shift))) translateY(7svh) scale(.89)}
   }
-  .product-hand.closing .fan-titles {visibility:hidden}
+  @media(prefers-reduced-motion:reduce) { .stage .product-hand .feature {transition:none} }
 }
 @media(max-width:600px) {
-  .fan-titles {display:none}
-  .product-hand .fan-caption {
-    display:block;position:absolute;top:4%;left:5%;font:600 14px/1.4 system-ui;color:#48463f;
-  }
   .stage .hand.product-hand .feature .face .scene {padding:26px 3% 2%}
+}
+@media(min-width:601px) and (max-width:820px) {
+  .stage.both-open .hand.product-hand {
+    left:50%;--fan-width:87vw;--card-width:min(36vw,52svh);
+  }
+  .stage.both-open .personal-hand {left:78%;bottom:49svh;--card-width:17vw}
 }

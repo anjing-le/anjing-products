@@ -278,7 +278,7 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
   .personal-hand .profile-face .personal-card-label {font-size:15px}
 }
 </style>
-<link rel="stylesheet" href="assets/product-cards.css?v=fan-1">
+<link rel="stylesheet" href="assets/product-cards.css?v=fan-2">
 <link rel="stylesheet" href="assets/mobile.css">
 </head><body>
 <main class="stage" aria-label="产品">
@@ -567,10 +567,15 @@ const features = [
 ];
 function handRenderer(hand) {
   function highlight(button) {
-    for(const card of hand.querySelectorAll('.feature')) card.classList.toggle('show',card===button);
-    for(const title of hand.querySelectorAll('.fan-titles button')) {
-      title.classList.toggle('selected',title.dataset.index===button?.dataset.index);
-    }
+    const cards=[...hand.children];
+    const active=button?cards.indexOf(button):cards.length-1;
+    cards.forEach((card,i)=>{
+      card.classList.toggle('show',card===button);
+      if(!hand.classList.contains('product-hand')) return;
+      card.classList.toggle('uncovered',i===active);
+      card.classList.toggle('right-wing',i>active);
+      card.style.setProperty('--layer',cards.length-Math.abs(active-i));
+    });
   }
   let held=null;
   hand.onpointerdown=event=>{
@@ -654,19 +659,10 @@ function handRenderer(hand) {
     const pack=features[selection];
     hand.style.setProperty('--gaps',pack.length-1);
     hand.setAttribute('aria-label',cards[selection].button.getAttribute('aria-label')+' 功能牌');
-    let titles;
-    if(selection<3){
-      titles=document.createElement('div');
-      titles.className='fan-titles';
-      titles.setAttribute('role','group');
-      titles.setAttribute('aria-label','产品特色');
-      hand.append(titles);
-    }
     pack.forEach(([label,color,tint],i)=>{
       const button=document.createElement(selection===3?'a':'button');
       if(selection===3){button.href=personalLinks[i].href;button.target='_blank';button.rel='noopener noreferrer';button.draggable=false;}
       button.className='feature';
-      button.dataset.index=String(i);
       button.setAttribute('aria-label',label);
       const offset=i-(pack.length-1)/2;
       button.style.setProperty('--gather-x',(-offset*35)+'%');
@@ -703,14 +699,6 @@ function handRenderer(hand) {
         caption.className='fan-caption';
         caption.textContent=label;
         face.append(caption,picture);
-        const title=document.createElement('button');
-        title.type='button';
-        title.textContent=label;
-        title.dataset.index=String(i);
-        title.onpointerenter=e=>{if(e.pointerType!=='touch' && !held)highlight(button)};
-        title.onfocus=()=>highlight(button);
-        title.onclick=()=>button.click();
-        titles.append(title);
       }
       button.append(face);
       button.onfocus=()=>highlight(button);
@@ -718,6 +706,7 @@ function handRenderer(hand) {
       button.onclick=()=>{highlight(button);if(selection<3)viewArtwork(selection,i)};
       hand.append(button);
     });
+    highlight(null);
     hand.classList.add('reveal');
   };
 }
