@@ -151,10 +151,12 @@ body { margin:0; color:#282a25; background:#edeae2; font-family:"Helvetica Neue"
 .unit.person {animation-name:personal-wind;animation-play-state:running}
 @keyframes personal-wind {from {rotate:-2.4deg} to {rotate:2.1deg}}
 @media(prefers-reduced-motion:reduce){.badge-turn{transition:none}.unit.person{animation:none}}
-@media(pointer:fine){
-body {cursor:url("assets/cursor-arrow-1.png") 4 2,default;cursor:image-set(url("assets/cursor-arrow-1.png") 1x,url("assets/cursor-arrow-2.png") 2x) 4 2,default}
-.badge-toggle,.feature,.platforms button {cursor:url("assets/cursor-open-1.png") 11 12,pointer;cursor:image-set(url("assets/cursor-open-1.png") 1x,url("assets/cursor-open-2.png") 2x) 11 12,pointer}
-.badge-toggle:active {cursor:url("assets/cursor-closed-1.png") 11 12,grabbing;cursor:image-set(url("assets/cursor-closed-1.png") 1x,url("assets/cursor-closed-2.png") 2x) 11 12,grabbing}
+@media(pointer:fine) {
+  html, body {cursor:url("assets/cursors/richfree-cursor-20.png") 0 0,auto}
+  .stage :is(.badge,.badge-toggle,.feature,.platforms button),.viewer-bar button:not(:disabled) {
+    cursor:url("assets/cursors/richfree-pointer-20.png") 7 3,pointer;
+  }
+  .stage .platforms button[aria-disabled="true"] {cursor:not-allowed}
 }
 /* Keep both open hands reachable if a product is reopened from the personal view. */
 .stage.both-open .product-hand {left:34%;--card-width:min(27vw,50svh)}
